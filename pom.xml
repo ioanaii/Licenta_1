@@ -34,7 +34,6 @@
             <artifactId>selenium-server</artifactId>
             <version>3.11.0</version>
         </dependency>
-
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
@@ -42,5 +41,6 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
 
 </project>
