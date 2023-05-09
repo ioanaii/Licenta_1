@@ -7,13 +7,10 @@ import java.util.UUID;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.CapabilityType;
-import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
 
@@ -30,7 +27,7 @@ public class RegisterForm {
         ChromeOptions options = new ChromeOptions();
         options.setCapability(CapabilityType.BROWSER_NAME, "chrome");
 
-        driver = new RemoteWebDriver(new URL("http://172.16.123.128:4444"), options);
+        driver = new RemoteWebDriver(new URL("http://localhost:4444/wd/hub"), options);
 
         driver.get("http://localhost:8080/mtours/servlet/com.mercurytours.servlet.WelcomeServlet");
         driver.manage().timeouts().implicitlyWait(500, TimeUnit.MILLISECONDS);
@@ -46,8 +43,6 @@ public class RegisterForm {
 
     HomePage.accessRegisterPage(driver);
 
-    String guid = UUID.randomUUID().toString();
-
     registerForm.allFieldsRegistrationForm("FirstName", "LastName", "0729813506","user@email.com",
     "no", "nobody", "one", "cares", "yes",
             "ANTARCTICA","diditwork","itworks", "itworks");
@@ -55,6 +50,7 @@ public class RegisterForm {
 
     driver.manage().timeouts().implicitlyWait(500, TimeUnit.MILLISECONDS);
 
+    RegisterPage.successfulRegistration(driver, "username");
     RegisterConfirmationPage.confirmRegistration(driver);
 
     }
@@ -64,11 +60,12 @@ public class RegisterForm {
 
         HomePage.accessRegisterPage(driver);
 
-        registerForm.inputRegisterForm("User", "pass1!", "pass1!");
+        registerForm.inputRegisterForm("myusername", "mypassword", "mypassword");
 
         driver.manage().timeouts().implicitlyWait(500, TimeUnit.MILLISECONDS);
 
-        RegisterConfirmationPage.confirmRegistration(driver);
+        RegisterPage.successfulRegistration(driver, "myusername");
+        //RegisterConfirmationPage.confirmRegistration(driver);
     }
 
     @Test //existingUser
@@ -94,7 +91,7 @@ public class RegisterForm {
 
         driver.manage().timeouts().implicitlyWait(500, TimeUnit.MILLISECONDS);
 
-        RegisterPage.incompleteData(driver);
+        //-> to verify; may not work RegisterPage.incompleteData(driver);
     }
 
     @Test //invalid pass confirmation

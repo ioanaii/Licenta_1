@@ -27,12 +27,7 @@ public class RegisterPage {
         this.driver = driver;
     }
 
-    public void inputRegisterForm(String userName, String password, String confirmPassword){
-        driver.findElement(textbox_userName_registerForm).sendKeys(userName);
-        driver.findElement(textbox_passwordTxt_registerForm).sendKeys(password);
-        driver.findElement(textbox_confirmPasswordTxt_registerForm).sendKeys(confirmPassword);
-        driver.findElement(button_submitButton_registerForm).click();
-    }
+
 
     public void allFieldsRegistrationForm(String firstName, String lastName, String phone, String email,
                                           String address1, String address2, String city, String state, String postalCode,
@@ -61,6 +56,21 @@ public class RegisterPage {
 
         // Submit the form
         driver.findElement(button_submitButton_registerForm).click();
+    }
+
+    public void inputRegisterForm(String username, String password, String confirmPassword){
+        driver.findElement(textbox_userName_registerForm).sendKeys(username);
+        driver.findElement(textbox_passwordTxt_registerForm).sendKeys(password);
+        driver.findElement(textbox_confirmPasswordTxt_registerForm).sendKeys(confirmPassword);
+        driver.findElement(button_submitButton_registerForm).click();
+    }
+    public static void successfulRegistration(WebDriver driver, String username){
+        String currentURL = driver.getCurrentUrl();
+        String expectedURL = "http://localhost:8080/mtours/servlet/com.mercurytours.servlet.RegisterServlet?procSub=1";
+        Assert.assertEquals(currentURL, expectedURL);
+        String pageSource = driver.getPageSource();
+        String expectedMessage = "Note: Your user name is " + username;
+        Assert.assertTrue(pageSource.contains(expectedMessage));
     }
 
     public static void existingUser(WebDriver driver){
