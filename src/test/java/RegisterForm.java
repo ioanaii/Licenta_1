@@ -12,6 +12,8 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+
 
 
 import java.util.concurrent.TimeUnit;
@@ -19,11 +21,13 @@ import java.util.concurrent.TimeUnit;
 
 
 public class RegisterForm {
-
+    private static String uniqueUsername;
+    private static String uniqueUsername2;
     private static WebDriver driver = null;
 
     @BeforeTest
-    public static void setUp() throws Exception {
+    //TO DO: Fix Selenium Grid
+    /*public static void setUp() throws Exception {
         ChromeOptions options = new ChromeOptions();
         options.setCapability(CapabilityType.BROWSER_NAME, "chrome");
 
@@ -33,39 +37,51 @@ public class RegisterForm {
         driver.manage().timeouts().implicitlyWait(500, TimeUnit.MILLISECONDS);
 
 
+    }*/
+    //To be used until figuring out Selenium grid
+    public static void setUp(){
+        WebDriverManager.chromedriver().setup();
+        driver = new ChromeDriver();
+        driver.get("http://localhost:8080/mtours/servlet/com.mercurytours.servlet.WelcomeServlet");
+
     }
+
 
 
     @Test //submitAllFields
     public static void testSubmitAllFields(){
     //WebDriver driver = null;
+
+    // Generate a unique username using UUID
+    uniqueUsername = "username_" + UUID.randomUUID().toString().substring(0, 8);
     RegisterPage registerForm = new RegisterPage(driver);
 
     HomePage.accessRegisterPage(driver);
 
     registerForm.allFieldsRegistrationForm("FirstName", "LastName", "0729813506","user@email.com",
-    "no", "nobody", "one", "cares", "yes",
-            "ANTARCTICA","diditwork","itworks", "itworks");
+    "Address 12345, Test 23", "23 Lane, 12", "Bucharest", "Bucharest", "123457",
+            "ANTARCTICA",uniqueUsername,"mypassword", "mypassword");
     //registerForm.clickSubmitButton();
 
     driver.manage().timeouts().implicitlyWait(500, TimeUnit.MILLISECONDS);
 
-    RegisterPage.successfulRegistration(driver, "username");
+    RegisterPage.successfulRegistration(driver, uniqueUsername);
     RegisterConfirmationPage.confirmRegistration(driver);
 
     }
     @Test //successfulRegistration
     public static void testSubmitForm(){
+        uniqueUsername2 = "username_" + UUID.randomUUID().toString().substring(0, 8);
         RegisterPage registerForm = new RegisterPage(driver);
 
         HomePage.accessRegisterPage(driver);
 
-        registerForm.inputRegisterForm("myusername", "mypassword", "mypassword");
+        registerForm.inputRegisterForm(uniqueUsername2, "mypassword", "mypassword");
 
         driver.manage().timeouts().implicitlyWait(500, TimeUnit.MILLISECONDS);
 
-        RegisterPage.successfulRegistration(driver, "myusername");
-        //RegisterConfirmationPage.confirmRegistration(driver);
+        RegisterPage.successfulRegistration(driver, uniqueUsername2);
+        RegisterConfirmationPage.confirmRegistration(driver);
     }
 
     @Test //existingUser
@@ -74,7 +90,9 @@ public class RegisterForm {
 
         HomePage.accessRegisterPage(driver);
 
-        registerForm.inputRegisterForm("User", "pass1!", "pass1!");
+        String existingUsername = uniqueUsername;
+
+        registerForm.inputRegisterForm(existingUsername, "mypassword", "mypassword");
 
         driver.manage().timeouts().implicitlyWait(500, TimeUnit.MILLISECONDS);
 
@@ -87,11 +105,11 @@ public class RegisterForm {
 
         HomePage.accessRegisterPage(driver);
 
-        registerForm.inputRegisterForm("User1", "passwrd", "");
+        registerForm.inputRegisterForm("", "mypassword", "mypassword");
 
         driver.manage().timeouts().implicitlyWait(500, TimeUnit.MILLISECONDS);
 
-        //-> to verify; may not work RegisterPage.incompleteData(driver);
+        RegisterPage.incompleteData(driver);
     }
 
     @Test //invalid pass confirmation
@@ -100,7 +118,7 @@ public class RegisterForm {
 
         HomePage.accessRegisterPage(driver);
 
-        registerForm.inputRegisterForm("User1", "password", "passwrd");
+        registerForm.inputRegisterForm("myusername", "password", "passwrd");
 
         driver.manage().timeouts().implicitlyWait(500, TimeUnit.MILLISECONDS);
 
