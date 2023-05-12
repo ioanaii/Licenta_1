@@ -14,6 +14,11 @@ import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Properties;
+
 
 
 import java.util.concurrent.TimeUnit;
@@ -21,6 +26,7 @@ import java.util.concurrent.TimeUnit;
 
 
 public class RegisterForm {
+    private static Properties prop = new Properties();
     private static String uniqueUsername;
     private static String uniqueUsername2;
     private static WebDriver driver = null;
@@ -54,6 +60,7 @@ public class RegisterForm {
 
     // Generate a unique username using UUID
     uniqueUsername = "username_" + UUID.randomUUID().toString().substring(0, 8);
+
     RegisterPage registerForm = new RegisterPage(driver);
 
     HomePage.accessRegisterPage(driver);
@@ -61,9 +68,16 @@ public class RegisterForm {
     registerForm.allFieldsRegistrationForm("FirstName", "LastName", "0729813506","user@email.com",
     "Address 12345, Test 23", "23 Lane, 12", "Bucharest", "Bucharest", "123457",
             "ANTARCTICA",uniqueUsername,"mypassword", "mypassword");
-    //registerForm.clickSubmitButton();
 
-    driver.manage().timeouts().implicitlyWait(500, TimeUnit.MILLISECONDS);
+
+    prop.setProperty("username", uniqueUsername);
+    prop.setProperty("password", "mypassword");
+
+        try (FileOutputStream fileOut = new FileOutputStream("src/main/resources/test.properties")) {
+            prop.store(fileOut, "Registered Usernames and Passwords");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     RegisterPage.successfulRegistration(driver, uniqueUsername);
     RegisterConfirmationPage.confirmRegistration(driver);
@@ -78,10 +92,19 @@ public class RegisterForm {
 
         registerForm.inputRegisterForm(uniqueUsername2, "mypassword", "mypassword");
 
-        driver.manage().timeouts().implicitlyWait(500, TimeUnit.MILLISECONDS);
+        prop.setProperty("username2", uniqueUsername2);
+        prop.setProperty("password2", "mypassword");
+
+        try (FileOutputStream fileOut = new FileOutputStream("src/main/resources/test.properties")) {
+            prop.store(fileOut, "Registered Usernames and Passwords");
+        } catch (IOException e) {
+            e.printStackTrace();
 
         RegisterPage.successfulRegistration(driver, uniqueUsername2);
         RegisterConfirmationPage.confirmRegistration(driver);
+
+
+        }
     }
 
     @Test //existingUser

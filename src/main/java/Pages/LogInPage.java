@@ -12,7 +12,7 @@ public class LogInPage {
     By textbox_password_LogInPage = By.name("password");
     By button_submitButton_LogInPage = By.name("login");
 
-    public LogInPage(WebDriver driver){
+    private LogInPage(WebDriver driver){
         this.driver = driver;
     }
 

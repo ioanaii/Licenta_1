@@ -8,4 +8,9 @@ public class HomePage {
         WebElement registerHref = driver.findElement(By.xpath("//a[@href='com.mercurytours.servlet.RegisterServlet']"));
         registerHref.click();
     }
+
+    public static void accessLogInPage(WebDriver driver) {
+        WebElement registerHref = driver.findElement(By.xpath("//a[@href='com.mercurytours.servlet.RegisterServlet']"));
+        registerHref.click();
+    }
 }
