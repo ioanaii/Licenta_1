@@ -10,7 +10,7 @@ public class HomePage {
     }
 
     public static void accessLogInPage(WebDriver driver) {
-        WebElement registerHref = driver.findElement(By.xpath("//a[@href='com.mercurytours.servlet.RegisterServlet']"));
+        WebElement registerHref = driver.findElement(By.xpath("//a[@href='com.mercurytours.servlet.SignonServlet']"));
         registerHref.click();
     }
-}
+}//

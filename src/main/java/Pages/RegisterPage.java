@@ -46,8 +46,7 @@ public class RegisterPage {
         driver.findElement(textbox_postalCode_registerForm).sendKeys(postalCode);
         driver.findElement(dropdown_country_registerForm).click();
 
-        WebElement countryDropdown = driver.findElement(dropdown_country_registerForm);
-        Select countrySelect = new Select(countryDropdown);
+        Select countrySelect = new Select(driver.findElement(dropdown_country_registerForm));
         countrySelect.selectByVisibleText(country);
 
         driver.findElement(textbox_userName_registerForm).sendKeys(username);

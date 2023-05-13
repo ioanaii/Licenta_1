@@ -3,11 +3,11 @@ package Pages;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.By;
+import org.openqa.selenium.support.ui.Select;
 import org.testng.Assert;
 
 public class FlightFinderPage {
     WebDriver driver = null;
-
     By radioButton_flightType_roundTrip_FlightFinder = By.cssSelector("input[type='radio'][name='tripType'][value='roundtrip']");
     By radioButton_flightType_oneWay_FlightFinder = By.cssSelector("input[type='radio'][name='tripType'][value='oneway']");
     By dropdown_passCount_FlightFinder = By.name("passCount");
@@ -30,121 +30,128 @@ public class FlightFinderPage {
                                    String toPort, String toMonth, String toDay, String serviceClass, String airline) {
         // Select trip type radio button
         if (tripType.equalsIgnoreCase("roundtrip")) {
-            WebElement roundTripRadio = driver.findElement(By.cssSelector("input[type='radio'][name='tripType'][value='roundtrip']"));
-            roundTripRadio.click();
+            driver.findElement(radioButton_flightType_roundTrip_FlightFinder).click();
+
         } else if (tripType.equalsIgnoreCase("oneway")) {
-            WebElement oneWayRadio = driver.findElement(By.cssSelector("input[type='radio'][name='tripType'][value='oneway']"));
-            oneWayRadio.click();
+            driver.findElement(radioButton_flightType_oneWay_FlightFinder).click();
         }
 
         // Select pass count
-        WebElement passCountDropdown = driver.findElement(By.name("passCount"));
-        passCountDropdown.sendKeys(passCount);
+        Select passCountDropdown = new Select(driver.findElement(dropdown_passCount_FlightFinder));
+        passCountDropdown.selectByVisibleText(passCount);
 
         // Select departure from
-        WebElement fromPortDropdown = driver.findElement(By.name("fromPort"));
-        fromPortDropdown.sendKeys(fromPort);
+        Select fromPortDropdown = new Select(driver.findElement(dropdown_fromPort_FlightFinder));
+        fromPortDropdown.selectByVisibleText(fromPort);
 
         // Select departure month
-        WebElement fromMonthDropdown = driver.findElement(By.name("fromMonth"));
-        fromMonthDropdown.sendKeys(fromMonth);
+        Select fromMonthDropdown = new Select(driver.findElement(dropdown_departureMonth_FlightFinder));
+        fromMonthDropdown.selectByVisibleText(fromMonth);
 
         // Select departure day
-        WebElement fromDayDropdown = driver.findElement(By.name("fromDay"));
-        fromDayDropdown.sendKeys(fromDay);
+        Select fromDayDropdown = new Select(driver.findElement(dropdown_departureDay_FlightFinder));
+        fromDayDropdown.selectByVisibleText(fromDay);
 
         // Select arrival to
-        WebElement toPortDropdown = driver.findElement(By.name("toPort"));
-        toPortDropdown.sendKeys(toPort);
+        Select toPortDropdown = new Select(driver.findElement(dropdown_toPort_FlightFinder));
+        toPortDropdown.selectByVisibleText(toPort);
 
         // Select arrival month
-        WebElement toMonthDropdown = driver.findElement(By.name("toMonth"));
-        toMonthDropdown.sendKeys(toMonth);
+        Select toMonthDropdown = new Select(driver.findElement(dropdown_arrivalMonth_FlightFinder));
+        toMonthDropdown.selectByVisibleText(toMonth);
 
         // Select arrival day
-        WebElement toDayDropdown = driver.findElement(By.name("toDay"));
-        toDayDropdown.sendKeys(toDay);
+        Select toDayDropdown = new Select(driver.findElement(dropdown_arrivalDay_FlightFinder));
+        toDayDropdown.selectByVisibleText(toDay);
 
         // Select service class radio button
         if (serviceClass.equalsIgnoreCase("Coach")) {
-            WebElement coachRadio = driver.findElement(By.cssSelector("input[type='radio'][name='servClass'][value='Coach']"));
-            coachRadio.click();
+            driver.findElement(radioButtons_serviceClass_coach_FlightFinder).click();
         } else if (serviceClass.equalsIgnoreCase("Business")) {
-            WebElement businessRadio = driver.findElement(By.cssSelector("input[type='radio'][name='servClass'][value='Business']"));
-            businessRadio.click();
+            driver.findElement(radioButtons_serviceClass_business_FlightFinder).click();
         } else if (serviceClass.equalsIgnoreCase("First")) {
-            WebElement firstRadio = driver.findElement(By.cssSelector("input[type='radio'][name='servClass'][value='First']"));
-            firstRadio.click();
+            driver.findElement(radioButtons_serviceClass_first_FlightFinder).click();
         }
 
         // Select airline
-        WebElement airlineDropdown = driver.findElement(By.name("airline"));
-        airlineDropdown.sendKeys(airline);
+        Select airlineDropdown = new Select (driver.findElement(dropdown_airline_FlightFinder));
+        airlineDropdown.selectByVisibleText(airline);
+
+        String selectedFromPort = fromPortDropdown.getFirstSelectedOption().getText();
+        String selectedToPort = toPortDropdown.getFirstSelectedOption().getText();
+
+        String selectedFromMonth = fromMonthDropdown.getFirstSelectedOption().getText();
+        String selectedFromDay = fromDayDropdown.getFirstSelectedOption().getText();
+        String selectedToMonth = toMonthDropdown.getFirstSelectedOption().getText();
+        String selectedToDay = toDayDropdown.getFirstSelectedOption().getText();
+
+        successfulBooking(selectedFromPort, selectedToPort);
+        verifyDepartureDateIsGreaterThanReturnDate(selectedFromMonth, selectedFromDay, selectedToMonth, selectedToDay);
     }
 
-    public static void successfulBooking(WebDriver driver, String fromPort, String toPort){
+
+    //To DO: fix this
+    public String successfulBooking(String selectedFromPort, String selectedToPort){
         String currentURL = driver.getCurrentUrl();
-        String expectedURL = "http://localhost:8080/mtours/servlet/com.mercurytours.servlet.ReservationServlet?procSub=1&pg=1";
+        String expectedURL = "http://localhost:8080/mtours/servlet/com.mercurytours.servlet.ReservationServlet";
         Assert.assertEquals(currentURL, expectedURL);
         String pageSource = driver.getPageSource();
-        String expectedMessage1 = fromPort + "to" + toPort;
-        Assert.assertTrue(pageSource.contains(expectedMessage1));
-        String expectedMessage2 = toPort + "to" + fromPort;
-        Assert.assertTrue(pageSource.contains(expectedMessage2));
+
+        String expectedMessage1 = selectedFromPort + "to" + selectedToPort;
+        if (!pageSource.contains(expectedMessage1)) {
+            return "Expected Message 1 not found";
+        }
+
+        String expectedMessage2 = selectedToPort + "to" + selectedFromPort;
+        if (!pageSource.contains(expectedMessage2)) {
+            return "Expected Message 2 not found";
+        }
+
+        return "Success";
+
     }
 
-    public void verifyDepartureDateIsGreaterThanReturnDate() {
-        WebElement fromMonthDropdown = driver.findElement(By.name("fromMonth"));
-        String fromMonth = fromMonthDropdown.getAttribute("value");
+    public void verifyDepartureDateIsGreaterThanReturnDate (String selectedFromMonth, String selectedFromDay, String selectedToMonth, String selectedToDay) {
 
-        WebElement fromDayDropdown = driver.findElement(By.name("fromDay"));
-        String fromDay = fromDayDropdown.getAttribute("value");
-
-        WebElement toMonthDropdown = driver.findElement(By.name("toMonth"));
-        String toMonth = toMonthDropdown.getAttribute("value");
-
-        WebElement toDayDropdown = driver.findElement(By.name("toDay"));
-        String toDay = toDayDropdown.getAttribute("value");
-
-        int departureMonth = getMonthIndex(fromMonth);
-        int departureDay = Integer.parseInt(fromDay);
-        int returnMonth = getMonthIndex(toMonth);
-        int returnDay = Integer.parseInt(toDay);
+        int departureMonth = getMonthIndex(selectedFromMonth);
+        int departureDay = Integer.parseInt(selectedFromDay);
+        int returnMonth = getMonthIndex(selectedToMonth);
+        int returnDay = Integer.parseInt(selectedToDay);
 
         if (departureMonth > returnMonth || (departureMonth == returnMonth && departureDay > returnDay)) {
             System.out.println("Departure date is greater than the return date. Test failed.");
             // Add your test failure logic here
         } else {
-            System.out.println("Departure date is not greater than the return date. Test passed.");
+            System.out.println("Departure and return dates are valid. Test passed.");
             // Add your test success logic here
         }
     }
 
     private int getMonthIndex(String month) {
         switch (month) {
-            case "January":
+            case "Jan":
                 return 1;
-            case "February":
+            case "Feb":
                 return 2;
-            case "March":
+            case "Mar":
                 return 3;
-            case "April":
+            case "Apr":
                 return 4;
             case "May":
                 return 5;
-            case "June":
+            case "Jun":
                 return 6;
-            case "July":
+            case "Jul":
                 return 7;
-            case "August":
+            case "Aug":
                 return 8;
-            case "September":
+            case "Sep":
                 return 9;
-            case "October":
+            case "Oct":
                 return 10;
-            case "November":
+            case "Nov":
                 return 11;
-            case "December":
+            case "Dec":
                 return 12;
             default:
                 return -1; // Invalid month

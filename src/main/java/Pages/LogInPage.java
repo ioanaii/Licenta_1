@@ -12,7 +12,7 @@ public class LogInPage {
     By textbox_password_LogInPage = By.name("password");
     By button_submitButton_LogInPage = By.name("login");
 
-    private LogInPage(WebDriver driver){
+    public LogInPage(WebDriver driver){
         this.driver = driver;
     }
 
@@ -28,8 +28,12 @@ public class LogInPage {
         Assert.assertEquals(currentURL, expectedURL);
     }
 
-    public void invalidLogIn(){
+    public void invalidUsernameOrPassword(){
         Assert.assertEquals(driver.getPageSource().contains("Invalid User Name or Password."), true);
-
     }
+
+    public void incompleteFields(){
+        Assert.assertEquals(driver.getPageSource().contains("Please fill all fields."), true);
+    }
+
 }
