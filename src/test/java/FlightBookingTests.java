@@ -1,31 +1,22 @@
-import Pages.HomePage;
-import Pages.RegisterPage;
-import Pages.RegisterConfirmationPage;
 import Pages.LogInPage;
 import Pages.FlightFinderPage;
 import Pages.FlightSelectionPage;
+import Pages.FlightPurchasePage;
 
 
-import java.net.URL;
-import java.util.UUID;
 import io.github.bonigarcia.wdm.WebDriverManager;
-import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.WebDriver;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
-import org.openqa.selenium.remote.CapabilityType;
-import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.testng.annotations.TestInstance;
 
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
 
 
-public class FlightFinder {
+public class FlightBookingTests {
     private static Properties prop = new Properties();
     private static WebDriver driver = null;
 
@@ -57,9 +48,13 @@ public class FlightFinder {
     public static void Test1(){
         FlightFinderPage flightFinder = new FlightFinderPage(driver);
         FlightSelectionPage flightSelect = new FlightSelectionPage(driver);
+        FlightPurchasePage flightPurchase= new FlightPurchasePage(driver);
 
-        flightFinder.enterFlightDetails("roundtrip", "2", "Frankfurt", "Feb", "22", "Acapulco", "Feb", "22", "Coach", "Unified Airlines");
-        flightSelect.test();
+        flightFinder.enterFlightDetails("roundtrip", "2", "Frankfurt", "Feb", "22", "Acapulco", "Feb", "22", "Coach", "No Preference");
+        flightSelect.selectFlights(1,2);
+        flightSelect.successfulFlightSelect();
+        flightPurchase.inputFlightPurchase("John", "Doe", "1123st");
+
     }
 
     @Test //test will fail (departure date>return date)

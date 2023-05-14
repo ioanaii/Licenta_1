@@ -82,8 +82,7 @@ public class FlightFinderPage {
 
 
 
-        String selectedFromPort = fromPortDropdown.getFirstSelectedOption().getText();
-        String selectedToPort = toPortDropdown.getFirstSelectedOption().getText();
+
 
         String selectedFromMonth = fromMonthDropdown.getFirstSelectedOption().getText();
         String selectedFromDay = fromDayDropdown.getFirstSelectedOption().getText();
