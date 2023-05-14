@@ -36,4 +36,8 @@ public class LogInPage {
         Assert.assertEquals(driver.getPageSource().contains("Please fill all fields."), true);
     }
 
+    public void validationErrorsLogIn(){
+
+    }
+
 }

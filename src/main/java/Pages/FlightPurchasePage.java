@@ -35,18 +35,28 @@ public class FlightPurchasePage {
 
     public void checkValidationErrors(String firstNameFlightPurchase, String lastNameFlightPurchase, String creditNumberFlightPurchase){
         SoftAssert softAssert = new SoftAssert();
-
+        boolean hasValidationErrors = false;
 
         if (firstNameFlightPurchase.isEmpty() || lastNameFlightPurchase.isEmpty() || creditNumberFlightPurchase.isEmpty()) {
             softAssert.assertTrue(driver.getPageSource().contains("Error: Please fill all mandatory fields in red, and then resubmit the form."));
+        } else {
+            softAssert.fail("Incomplete fields error message not found.");
         }
+
         if (!creditNumberFlightPurchase.matches("\\d+")) {
             softAssert.assertTrue(driver.getPageSource().contains("Error: The credit card number is not valid"));
+        } else {
+            softAssert.fail("Invalid credit card number error message not found.");
         }
-        else {
+
+        if (!hasValidationErrors) {
             String currentURL = driver.getCurrentUrl();
             String expectedURL = "http://localhost:8080/mtours/servlet/com.mercurytours.servlet.PurchaseServlet?procSub=1&pg=1";
             Assert.assertEquals(currentURL, expectedURL);
+        } else {
+            Assert.fail("User is not redirected to correct URL");
         }
+
+        softAssert.assertAll();
     }
 }
