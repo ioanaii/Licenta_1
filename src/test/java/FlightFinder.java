@@ -3,6 +3,7 @@ import Pages.RegisterPage;
 import Pages.RegisterConfirmationPage;
 import Pages.LogInPage;
 import Pages.FlightFinderPage;
+import Pages.FlightSelectionPage;
 
 
 import java.net.URL;
@@ -29,7 +30,7 @@ public class FlightFinder {
     private static WebDriver driver = null;
 
     @BeforeTest
-    public static void setUp(){
+    public static void setUp() {
 
         // Load the properties file to access the registered usernames
         try (FileInputStream fileIn = new FileInputStream("src/main/resources/test.properties")) {
@@ -45,21 +46,28 @@ public class FlightFinder {
 
         //Log in prior to test execution
         LogInPage logInPage = new LogInPage(driver);
+
         String user1 = prop.getProperty("username");
         String pass1 = prop.getProperty("password");
-        HomePage.accessLogInPage(driver);
-        logInPage.inputLogIn(user1, pass1);
 
+        logInPage.inputLogIn(user1, pass1);
     }
 
-    @Test
-    public static void Test(){
+    @Test //test will pass
+    public static void Test1(){
+        FlightFinderPage flightFinder = new FlightFinderPage(driver);
+        FlightSelectionPage flightSelect = new FlightSelectionPage(driver);
+
+        flightFinder.enterFlightDetails("roundtrip", "2", "Frankfurt", "Feb", "22", "Acapulco", "Feb", "22", "Coach", "Unified Airlines");
+        flightSelect.test();
+    }
+
+    @Test //test will fail (departure date>return date)
+    public static void Test2(){
         FlightFinderPage flightFinder = new FlightFinderPage(driver);
 
-        flightFinder.enterFlightDetails("roundtrip", "2", "Frankfurt", "Feb", "22", "Acapulco", "May", "13", "Coach", "Unified Airlines");
-        //flightFinder.verifyDepartureDateIsGreaterThanReturnDate(String selectedFromMonth, selectedFromDay, selectedToMonth, selectedToDay);
+        flightFinder.enterFlightDetails("roundtrip", "2", "Frankfurt", "Feb", "22", "Acapulco", "Feb", "21", "Coach", "Unified Airlines");
     }
-        //flightFinder.successfulBooking(driver, fromPort, toPort);
 
 
     @AfterTest

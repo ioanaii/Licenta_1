@@ -5,6 +5,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.By;
 import org.openqa.selenium.support.ui.Select;
 import org.testng.Assert;
+import org.testng.asserts.SoftAssert;
 
 public class FlightFinderPage {
     WebDriver driver = null;
@@ -21,6 +22,8 @@ public class FlightFinderPage {
     By radioButtons_serviceClass_business_FlightFinder = By.cssSelector("input[type='radio'][name='servClass'][value='Business']");
     By radioButtons_serviceClass_first_FlightFinder = By.cssSelector("input[type='radio'][name='servClass'][value='First']");
     By dropdown_airline_FlightFinder = By.name("airline");
+
+    By button_submitButton_FlightFinder = By.name("findFlights");
 
     public FlightFinderPage(WebDriver driver) {
         this.driver = driver;
@@ -77,6 +80,8 @@ public class FlightFinderPage {
         Select airlineDropdown = new Select (driver.findElement(dropdown_airline_FlightFinder));
         airlineDropdown.selectByVisibleText(airline);
 
+
+
         String selectedFromPort = fromPortDropdown.getFirstSelectedOption().getText();
         String selectedToPort = toPortDropdown.getFirstSelectedOption().getText();
 
@@ -85,33 +90,23 @@ public class FlightFinderPage {
         String selectedToMonth = toMonthDropdown.getFirstSelectedOption().getText();
         String selectedToDay = toDayDropdown.getFirstSelectedOption().getText();
 
-        successfulBooking(selectedFromPort, selectedToPort);
+        driver.findElement(button_submitButton_FlightFinder).click();
+
+
         verifyDepartureDateIsGreaterThanReturnDate(selectedFromMonth, selectedFromDay, selectedToMonth, selectedToDay);
+        successfulBooking();
     }
 
 
     //To DO: fix this
-    public String successfulBooking(String selectedFromPort, String selectedToPort){
+    public void successfulBooking(){
         String currentURL = driver.getCurrentUrl();
-        String expectedURL = "http://localhost:8080/mtours/servlet/com.mercurytours.servlet.ReservationServlet";
+        String expectedURL = "http://localhost:8080/mtours/servlet/com.mercurytours.servlet.ReservationServlet?procSub=1&pg=1";
         Assert.assertEquals(currentURL, expectedURL);
-        String pageSource = driver.getPageSource();
-
-        String expectedMessage1 = selectedFromPort + "to" + selectedToPort;
-        if (!pageSource.contains(expectedMessage1)) {
-            return "Expected Message 1 not found";
-        }
-
-        String expectedMessage2 = selectedToPort + "to" + selectedFromPort;
-        if (!pageSource.contains(expectedMessage2)) {
-            return "Expected Message 2 not found";
-        }
-
-        return "Success";
-
     }
 
     public void verifyDepartureDateIsGreaterThanReturnDate (String selectedFromMonth, String selectedFromDay, String selectedToMonth, String selectedToDay) {
+        SoftAssert softAssert= new SoftAssert();
 
         int departureMonth = getMonthIndex(selectedFromMonth);
         int departureDay = Integer.parseInt(selectedFromDay);
@@ -119,12 +114,25 @@ public class FlightFinderPage {
         int returnDay = Integer.parseInt(selectedToDay);
 
         if (departureMonth > returnMonth || (departureMonth == returnMonth && departureDay > returnDay)) {
-            System.out.println("Departure date is greater than the return date. Test failed.");
-            // Add your test failure logic here
+            System.out.println("Departure date is greater than the return date.");
+
+
+            if (driver.getPageSource().contains("Departure date is greater than the return date.")) {
+                System.out.println("Validation error message is displayed. Test passed.");
+
+            } else {
+                System.out.println("Validation error message is not displayed. Test failed.");
+                Assert.fail("Validation error message is not displayed. Test failed.");
+
+            }
         } else {
-            System.out.println("Departure and return dates are valid. Test passed.");
-            // Add your test success logic here
+            System.out.println("Departure and return dates are valid.");
+
+            // Assuming the user is redirected to the flight purchase page, assert the condition
+            softAssert.assertTrue(driver.getCurrentUrl().equals("http://localhost:8080/mtours/servlet/com.mercurytours.servlet.ReservationServlet?procSub=1&pg=1"), "User is not directed to the SelectFlight page");
         }
+
+        softAssert.assertAll();
     }
 
     private int getMonthIndex(String month) {
