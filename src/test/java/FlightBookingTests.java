@@ -60,7 +60,7 @@ public class FlightBookingTests {
         flightSelect.successfulFlightSelect();
         flightPurchase.inputFlightPurchase("", "Doe", "1123");
         flightPurchase.inputFlightPurchase("John", "", "1123");
-        flightPurchase.inputFlightPurchase("John", "Dose", "1123a");
+        flightPurchase.inputFlightPurchase("John", "Dose", "1123");
 
         homePage.accessItinerary(driver);
         itineraryPage.removeSelected();

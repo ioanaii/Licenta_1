@@ -15,20 +15,31 @@ public class ItineraryPage {
     By button_removeSelected_Itinerary = By.name("removeSelected");
     By button_removeAll_Itinerary = By.name("removeAll");
 
+
+
+
     public ItineraryPage (WebDriver driver) {
         this.driver = driver;
     }
 
+    //to do: fix this
     public void removeSelected() {
-        List<WebElement> bookedFlights = driver.findElements(radio_bookedFlight_Itinerary);
-        int bookedFlightsCount = bookedFlights.size();
 
-        // Select a subset of radio buttons, e.g., select the first and third radio buttons
+        //TO DO: get checked items by 'name' and verify that removed items are not available after submissions
+        List<WebElement> bookedFlights = driver.findElements(radio_bookedFlight_Itinerary);
+
+        int bookedFlightsCount = bookedFlights.size();
+        int checkedItemsCount = 0;
+        System.out.println("checked items count:"+ bookedFlightsCount);
+
         for (int i = 0; i < bookedFlightsCount; i += 2) {
             bookedFlights.get(i).click();
+            checkedItemsCount++;
         }
 
-        // Perform actions on the selected radio buttons, such as clicking a remove button
+        //System.out.println("checked items count:"+ checkedItemsCount);
+
         driver.findElement(button_removeSelected_Itinerary).click();
     }
+
 }

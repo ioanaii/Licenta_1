@@ -20,16 +20,7 @@ public class LogInPage {
     public void inputLogIn(String username, String password){
         driver.findElement(textbox_userName_LogInPage).sendKeys(username);
         driver.findElement(textbox_password_LogInPage).sendKeys(password);
-
-        String initialURL = driver.getCurrentUrl();
-
         driver.findElement(button_submitButton_LogInPage).click();
-
-        String currentURL = driver.getCurrentUrl();
-
-
-        String userNameLogIn = driver.findElement(textbox_userName_LogInPage).getText();
-        String passwordLogIn = driver.findElement(textbox_password_LogInPage).getText();
 
     }
 
