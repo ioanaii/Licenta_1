@@ -3,6 +3,7 @@ package Pages;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.By;
 import org.testng.Assert;
+import org.testng.asserts.SoftAssert;
 
 public class LogInPage {
 
@@ -19,6 +20,10 @@ public class LogInPage {
     public void inputLogIn(String username, String password){
         driver.findElement(textbox_userName_LogInPage).sendKeys(username);
         driver.findElement(textbox_password_LogInPage).sendKeys(password);
+
+        String userNameLogIn = driver.findElement(textbox_userName_LogInPage).getText();
+        String passwordLogIn = driver.findElement(textbox_password_LogInPage).getText();
+
         driver.findElement(button_submitButton_LogInPage).click();
     }
 

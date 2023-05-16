@@ -1,8 +1,11 @@
-import Pages.LogInPage;
-import Pages.FlightFinderPage;
-import Pages.FlightSelectionPage;
-import Pages.FlightPurchasePage;
+package Pages;
 
+import Pages.FlightFinderPage;
+import Pages.FlightPurchasePage;
+import Pages.FlightSelectionPage;
+import Pages.LogInPage;
+import Pages.HomePage;
+import Pages.ItineraryPage;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.WebDriver;
@@ -49,11 +52,15 @@ public class FlightBookingTests {
         FlightFinderPage flightFinder = new FlightFinderPage(driver);
         FlightSelectionPage flightSelect = new FlightSelectionPage(driver);
         FlightPurchasePage flightPurchase= new FlightPurchasePage(driver);
+        ItineraryPage itineraryPage = new ItineraryPage(driver);
+        HomePage homePage = new HomePage(driver);
 
         flightFinder.enterFlightDetails("roundtrip", "2", "Frankfurt", "Feb", "22", "Acapulco", "Feb", "22", "Coach", "No Preference");
         flightSelect.selectFlights(1,2);
         flightSelect.successfulFlightSelect();
-        flightPurchase.inputFlightPurchase("John", "Doe", "1123st");
+        flightPurchase.inputFlightPurchase("John", "Doe", "1123");
+        homePage.accessItinerary(driver);
+        itineraryPage.removeSelected();
 
     }
 
