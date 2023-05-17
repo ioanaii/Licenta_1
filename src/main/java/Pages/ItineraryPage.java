@@ -17,9 +17,6 @@ public class ItineraryPage {
     By button_removeSelected_Itinerary = By.name("removeSelected");
     By button_removeAll_Itinerary = By.name("removeAll");
 
-
-
-
     public ItineraryPage (WebDriver driver) {
         this.driver = driver;
     }

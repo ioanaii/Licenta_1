@@ -5,6 +5,8 @@ import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.WebDriver;
 import org.testng.Assert;
+import org.testng.asserts.SoftAssert;
+
 public class RegisterPage {
 
     WebDriver driver = null;
@@ -64,12 +66,15 @@ public class RegisterPage {
         driver.findElement(button_submitButton_registerForm).click();
     }
     public static void successfulRegistration(WebDriver driver, String username){
+        SoftAssert softAssert = new SoftAssert();
+
         String currentURL = driver.getCurrentUrl();
         String expectedURL = "http://localhost:8080/mtours/servlet/com.mercurytours.servlet.RegisterServlet?procSub=1";
         Assert.assertEquals(currentURL, expectedURL);
         String pageSource = driver.getPageSource();
         String expectedMessage = "Note: Your user name is " + username;
-        Assert.assertTrue(pageSource.contains(expectedMessage));
+        softAssert.assertTrue(pageSource.contains(expectedMessage), "Expected message missing");
+
     }
 
     public static void existingUser(WebDriver driver){
@@ -78,7 +83,6 @@ public class RegisterPage {
     public static void incompleteData(WebDriver driver){
         Assert.assertEquals(driver.getPageSource().contains("Please fill all fields bellow to complete the registration."), true);
     }
-
     public static void invalidPassConfirmation(WebDriver driver){
         Assert.assertEquals(driver.getPageSource().contains("Note: The confirmed password must be the same as the desired password.."), true);
     }
