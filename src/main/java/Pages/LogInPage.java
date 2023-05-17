@@ -5,6 +5,9 @@ import org.openqa.selenium.By;
 import org.testng.Assert;
 import org.testng.asserts.SoftAssert;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+
 public class LogInPage {
 
     WebDriver driver = null;
@@ -39,8 +42,6 @@ public class LogInPage {
     }
 
     public void validationErrorsLogIn(){
-
-       
 
     }
 

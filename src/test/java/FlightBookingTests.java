@@ -55,7 +55,7 @@ public class FlightBookingTests {
         ItineraryPage itineraryPage = new ItineraryPage(driver);
         HomePage homePage = new HomePage(driver);
 
-        flightFinder.enterFlightDetails("roundtrip", "2", "Frankfurt", "Feb", "22", "Acapulco", "Feb", "22", "Coach", "No Preference");
+        flightFinder.enterFlightDetails("roundtrip", "2", "Frankfurt", "Feb", "22", "Acapulco", "Feb", "21", "Coach", "No Preference");
         flightSelect.selectFlights(1,2);
         flightSelect.successfulFlightSelect();
         //flightPurchase.inputFlightPurchase("", "Doe", "1123");

@@ -81,16 +81,12 @@ public class FlightFinderPage {
         airlineDropdown.selectByVisibleText(airline);
 
 
-
-
-
         String selectedFromMonth = fromMonthDropdown.getFirstSelectedOption().getText();
         String selectedFromDay = fromDayDropdown.getFirstSelectedOption().getText();
         String selectedToMonth = toMonthDropdown.getFirstSelectedOption().getText();
         String selectedToDay = toDayDropdown.getFirstSelectedOption().getText();
 
         driver.findElement(button_submitButton_FlightFinder).click();
-
 
         verifyDepartureDateIsGreaterThanReturnDate(selectedFromMonth, selectedFromDay, selectedToMonth, selectedToDay);
         successfulBooking();
@@ -128,7 +124,7 @@ public class FlightFinderPage {
             System.out.println("Departure and return dates are valid.");
 
             // Assuming the user is redirected to the flight purchase page, assert the condition
-            softAssert.assertTrue(driver.getCurrentUrl().equals("http://localhost:8080/mtours/servlet/com.mercurytours.servlet.ReservationServlet?procSub=1&pg=1"), "User is not directed to the SelectFlight page");
+            Assert.assertTrue(driver.getCurrentUrl().equals("http://localhost:8080/mtours/servlet/com.mercurytours.servlet.ReservationServlet?procSub=1&pg=1"), "User is not directed to the SelectFlight page");
         }
 
         softAssert.assertAll();

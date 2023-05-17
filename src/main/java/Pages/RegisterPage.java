@@ -78,13 +78,24 @@ public class RegisterPage {
     }
 
     public static void existingUser(WebDriver driver){
-        Assert.assertEquals(driver.getPageSource().contains("Note: Error - The user name has been already used, please enter a new name"), true);
+        SoftAssert softAssert = new SoftAssert();
+
+        softAssert.assertTrue(driver.getPageSource().contains("Note: Error - The user name has been already used, please enter a new name"), "Validation error not found");
     }
     public static void incompleteData(WebDriver driver){
-        Assert.assertEquals(driver.getPageSource().contains("Please fill all fields bellow to complete the registration."), true);
+        SoftAssert softAssert = new SoftAssert();
+
+        softAssert.assertTrue(driver.getPageSource().contains("Please fill all fields bellow to complete the registration."), "Validation error not found");
     }
     public static void invalidPassConfirmation(WebDriver driver){
-        Assert.assertEquals(driver.getPageSource().contains("Note: The confirmed password must be the same as the desired password.."), true);
+        SoftAssert softAssert = new SoftAssert();
+
+        softAssert.assertTrue(driver.getPageSource().contains("Note: The confirmed password must be the same as the desired password.."), "Validation error not found");
+
+    }
+
+    public static void verifyValidationErrors(String userName, String Password){
+
     }
 
      }
