@@ -3,6 +3,8 @@ import Pages.RegisterPage;
 import Pages.RegisterConfirmationPage;
 import Pages.DataGenerator;
 import Pages.LogInPage;
+import Pages.DataLoader;
+import Pages.DataLoader.TestData;
 
 import java.util.UUID;
 import io.github.bonigarcia.wdm.WebDriverManager;
@@ -28,87 +30,20 @@ public class RegisterForm {
     private static String uniqueUsername2;
     private static String uniquePassword;
     private static String uniquePassword2;
-    private static String user1;
-    private static String pass1;
     private static WebDriver driver = null;
-
+    //String user1 = prop.getProperty("username");
 
     @DataProvider
-    public Object[][] testData() {
-        //generate new data in Json file
-        DataGenerator dataGenerator = new DataGenerator();
-        dataGenerator.updateJsonFile();
-
-        try (FileReader reader = new FileReader("src/main/resources/testdata.json")) {
-            Gson gson = new Gson();
-            TestData[] testData = gson.fromJson(reader, TestData[].class);
-            return new Object[][]{{testData}};
-        } catch (IOException e) {
-            e.printStackTrace();
-            // Handle the exception appropriately
-            return new Object[0][0];
-        }
+    public Object[][] jsonTestData() {
+        TestData[] testData = DataLoader.loadFromJsonFile("src/main/resources/testdata.json");
+        return new Object[][]{{testData}};
     }
 
     @DataProvider
-        public Object[][] testData2(){
-            // Load the properties file to access the registered usernames
-            try (FileInputStream fileIn = new FileInputStream("src/main/resources/test2.properties")) {
-                prop.load(fileIn);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+    public Object[][] propertiesTestData() {
+        return DataLoader.loadFromPropertiesFile("src/main/resources/test2.properties", "username", "password", "username2","password2");
 
-            user1 = prop.getProperty("username");
-            pass1 = prop.getProperty("password");
-
-            return new Object[][] {
-                    { user1, pass1}
-            };
-        }
-        // Data model class representing the structure of the JSON data
-        private static class TestData {
-            private String firstName;
-            private String lastName;
-            private String phoneNumber;
-            private String email;
-            private String address;
-            private String city;
-            private String state;
-            private String postalCode;
-
-            public String getFirstName() {
-                return firstName;
-            }
-
-            public String getLastName() {
-                return lastName;
-            }
-
-            public String getPhoneNumber() {
-                return phoneNumber;
-            }
-
-            public String getEmail() {
-                return email;
-            }
-
-            public String getAddress() {
-                return address;
-            }
-
-            public String getCity() {
-                return city;
-            }
-
-            public String getState() {
-                return state;
-            }
-
-            public String getPostalCode() {
-                return postalCode;
-            }
-        }
+    }
 
 
 
@@ -127,8 +62,8 @@ public class RegisterForm {
     }*/
     //To be used until figuring out Selenium grid
     public static void setUp(){
-        DataGenerator dataGenerator = new DataGenerator();
-        dataGenerator.updateJsonFile();
+        //DataGenerator dataGenerator = new DataGenerator();
+        //dataGenerator.updateJsonFile();
 
         WebDriverManager.chromedriver().setup();
         driver = new ChromeDriver();
@@ -138,7 +73,7 @@ public class RegisterForm {
 
 
 
-    @Test(dataProvider = "testData") //submitAllFields
+    @Test(dataProvider = "jsonTestData") //submitAllFields
     public static void testSubmitAllFields(TestData[] testDataArray){
         TestData testData = testDataArray[0]; // Use the first element from the array
 
@@ -177,31 +112,22 @@ public class RegisterForm {
 
         registerForm.inputRegisterForm(uniqueUsername2, uniquePassword2, uniquePassword2);
 
-        //previously used to add data to test.properties
-        /*prop.setProperty("username2", uniqueUsername2);
-        //prop.setProperty("password2", uniquePassword2);
-
-        try (FileOutputStream fileOut = new FileOutputStream("src/main/resources/test.properties")) {
-            prop.store(fileOut, "Registered Usernames and Passwords");
-        } catch (IOException e) {
-            e.printStackTrace();*/
-
         RegisterPage.successfulRegistration(driver, uniqueUsername2);
         RegisterConfirmationPage.confirmRegistration(driver);
-
 
         }
 
 
-    @Test //existingUser
-    public static void testSubmitForm2(){
+    @Test(dataProvider = "propertiesTestData") //existingUser
+    public static void testSubmitForm2(Object[] data){
+        String username = (String) data[0];
+        String password = (String) data[1];
+
         RegisterPage registerForm = new RegisterPage(driver);
 
         HomePage.accessRegisterPage(driver);
 
-        String existingUsername = uniqueUsername;
-
-        registerForm.inputRegisterForm(existingUsername, uniquePassword, uniquePassword);
+        registerForm.inputRegisterForm(username, password, password);
 
         driver.manage().timeouts().implicitlyWait(500, TimeUnit.MILLISECONDS);
 
