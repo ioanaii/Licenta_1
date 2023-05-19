@@ -22,7 +22,6 @@ public class FlightFinderPage {
     By radioButtons_serviceClass_business_FlightFinder = By.cssSelector("input[type='radio'][name='servClass'][value='Business']");
     By radioButtons_serviceClass_first_FlightFinder = By.cssSelector("input[type='radio'][name='servClass'][value='First']");
     By dropdown_airline_FlightFinder = By.name("airline");
-
     By button_submitButton_FlightFinder = By.name("findFlights");
 
     public FlightFinderPage(WebDriver driver) {
@@ -31,6 +30,9 @@ public class FlightFinderPage {
 
     public void enterFlightDetails(String tripType, String passCount, String fromPort, String fromMonth, String fromDay,
                                    String toPort, String toMonth, String toDay, String serviceClass, String airline) {
+
+        String initialURL=driver.getCurrentUrl();
+
         // Select trip type radio button
         if (tripType.equalsIgnoreCase("roundtrip")) {
             driver.findElement(radioButton_flightType_roundTrip_FlightFinder).click();
@@ -80,7 +82,6 @@ public class FlightFinderPage {
         Select airlineDropdown = new Select (driver.findElement(dropdown_airline_FlightFinder));
         airlineDropdown.selectByVisibleText(airline);
 
-
         String selectedFromMonth = fromMonthDropdown.getFirstSelectedOption().getText();
         String selectedFromDay = fromDayDropdown.getFirstSelectedOption().getText();
         String selectedToMonth = toMonthDropdown.getFirstSelectedOption().getText();
@@ -88,20 +89,16 @@ public class FlightFinderPage {
 
         driver.findElement(button_submitButton_FlightFinder).click();
 
-        verifyDepartureDateIsGreaterThanReturnDate(selectedFromMonth, selectedFromDay, selectedToMonth, selectedToDay);
-        successfulBooking();
+        verifyValidations(initialURL, selectedFromMonth, selectedFromDay, selectedToMonth, selectedToDay);
+
     }
 
 
-    //To DO: fix this
-    public void successfulBooking(){
+    public void verifyValidations (String initialURL, String selectedFromMonth, String selectedFromDay, String selectedToMonth, String selectedToDay) {
+        SoftAssert softAssert= new SoftAssert();
+
         String currentURL = driver.getCurrentUrl();
         String expectedURL = "http://localhost:8080/mtours/servlet/com.mercurytours.servlet.ReservationServlet?procSub=1&pg=1";
-        Assert.assertEquals(currentURL, expectedURL);
-    }
-
-    public void verifyDepartureDateIsGreaterThanReturnDate (String selectedFromMonth, String selectedFromDay, String selectedToMonth, String selectedToDay) {
-        SoftAssert softAssert= new SoftAssert();
 
         int departureMonth = getMonthIndex(selectedFromMonth);
         int departureDay = Integer.parseInt(selectedFromDay);
@@ -109,27 +106,14 @@ public class FlightFinderPage {
         int returnDay = Integer.parseInt(selectedToDay);
 
         if (departureMonth > returnMonth || (departureMonth == returnMonth && departureDay > returnDay)) {
-            System.out.println("Departure date is greater than the return date.");
-
-
-            if (driver.getPageSource().contains("Departure date is greater than the return date.")) {
-                System.out.println("Validation error message is displayed. Test passed.");
-
-            } else {
-                System.out.println("Validation error message is not displayed. Test failed.");
-                Assert.fail("Validation error message is not displayed. Test failed.");
-
-            }
-        } else {
-            System.out.println("Departure and return dates are valid.");
-
-            // Assuming the user is redirected to the flight purchase page, assert the condition
-            Assert.assertTrue(driver.getCurrentUrl().equals("http://localhost:8080/mtours/servlet/com.mercurytours.servlet.ReservationServlet?procSub=1&pg=1"), "User is not directed to the SelectFlight page");
+            Assert.assertEquals(initialURL, currentURL, "Form is submitted with invalid user input");
+            softAssert.assertTrue(driver.getPageSource().contains("Departure date is greater than the return date."), "Validation error not found");
+        }else {
+            Assert.assertEquals(currentURL, expectedURL, "User is directed to the wrong page");
         }
 
         softAssert.assertAll();
     }
-
     private int getMonthIndex(String month) {
         switch (month) {
             case "Jan":

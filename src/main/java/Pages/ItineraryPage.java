@@ -5,12 +5,12 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.testng.Assert;
 import org.testng.asserts.SoftAssert;
+import java.util.ArrayList;
 
 import java.util.List;
 
 
 public class ItineraryPage {
-
 
     WebDriver driver;
     By radio_bookedFlight_Itinerary = By.xpath("//input[@type='checkbox' and @value='on']");
@@ -21,13 +21,15 @@ public class ItineraryPage {
         this.driver = driver;
     }
 
-    //to do: fix this
     public void removeSelected() {
+
         List<WebElement> bookedFlights = driver.findElements(radio_bookedFlight_Itinerary);
         int bookedFlightsCount = bookedFlights.size();
         int checkedItemsCount = 0;
 
         System.out.println("bookedFlightsCount: " + bookedFlightsCount);
+
+        List<String> selectedFlights = new ArrayList<>();
 
         for (int i = 0; i < bookedFlightsCount; i++) {
             if (i % 2 == 0) {  // Select every second radio button

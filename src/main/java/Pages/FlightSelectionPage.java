@@ -22,33 +22,31 @@ public class FlightSelectionPage {
     public void selectFlights(int outFlightIndex, int inFlightIndex) {
         List<WebElement> outFlightRadioButtons = driver.findElements(radio_outFlightFlightSelectionPage);
         int outFlightCount = outFlightRadioButtons.size();
-        System.out.println("outFlight radio buttons available: " + outFlightCount);
 
         List<WebElement> inFlightRadioButtons = driver.findElements(radio_inFlightFlightSelectionPage);
         int inFlightCount = inFlightRadioButtons.size();
-        System.out.println("inFlight radio buttons available: " + inFlightCount);
+
 
         if (outFlightIndex >= 0 && outFlightIndex < outFlightCount) {
             WebElement outFlightRadioButton = outFlightRadioButtons.get(outFlightIndex);
             outFlightRadioButton.click();
         } else {
-            System.out.println("Invalid outFlightIndex provided.");
+            throw new IllegalArgumentException("Invalid outFlightIndex provided.");
+
         }
 
         if (inFlightIndex >= 0 && inFlightIndex < inFlightCount) {
             WebElement inFlightRadioButton = inFlightRadioButtons.get(inFlightIndex);
             inFlightRadioButton.click();
         } else {
-            System.out.println("Invalid inFlightIndex provided.");
+            throw new IllegalArgumentException("Invalid outFlightIndex provided.");
         }
 
         driver.findElement(button_submitButton_FlightSelectionPage).click();
-    }
 
-    public void successfulFlightSelect(){
         String currentURL = driver.getCurrentUrl();
         String expectedURL = "http://localhost:8080/mtours/servlet/com.mercurytours.servlet.PurchaseServlet";
-        Assert.assertEquals(currentURL, expectedURL);
+        Assert.assertEquals(currentURL, expectedURL, "User is directed to wrong page");
     }
 
 }

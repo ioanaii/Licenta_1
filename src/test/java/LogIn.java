@@ -11,6 +11,7 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.WebDriver;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -24,16 +25,32 @@ import java.util.Properties;
 public class LogIn{
     private static Properties prop = new Properties();
     private static WebDriver driver = null;
+    private static String user1;
+    private static String pass1;
+    private static String user2;
+    private static String pass2;
 
+    @DataProvider
+    public Object[][] testData(){
+        // Load the properties file to access the registered usernames
+        try (FileInputStream fileIn = new FileInputStream("src/main/resources/test2.properties")) {
+            prop.load(fileIn);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        user1 = prop.getProperty("username");
+        pass1 = prop.getProperty("password");
+        user2 = prop.getProperty("username2");
+        pass2 = prop.getProperty("password2");
+
+        return new Object[][] {
+                { user1, pass1, user2, pass2 }
+        };
+
+    }
     @BeforeTest
     public static void setUp(){
-
-            // Load the properties file to access the registered usernames
-            try (FileInputStream fileIn = new FileInputStream("src/main/resources/test.properties")) {
-                prop.load(fileIn);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
 
         WebDriverManager.chromedriver().setup();
         driver = new ChromeDriver();
@@ -41,47 +58,21 @@ public class LogIn{
 
     }
 
-    @Test //successful login
-    public static void loginTest1() {
-        LogInPage logInPage = new LogInPage(driver);
-
-        // Load the properties file to access the registered usernames
-        String user1 = prop.getProperty("username");
-        String pass1 = prop.getProperty("password");
+    @Test(dataProvider = "testData")
+    public static void loginTest1(String user1, String pass1, String user2, String pass2) {
+        LogInPage logInPage = new LogInPage(driver, user1, pass1, user2, pass2);
 
         HomePage.accessLogInPage(driver);
+        //invalid username or password
+        logInPage.inputLogIn(user1, pass2);
+        logInPage.inputLogIn(user2, pass1);
+
+        //incomplete fields
+        logInPage.inputLogIn("", pass1);
+        logInPage.inputLogIn(user1, "pass1");
+
+        //valid login
         logInPage.inputLogIn(user1, pass1);
-        logInPage.validLogIN(driver);
-
-    }
-
-    @Test //incorrect password
-    public static void loginTest2() {
-        LogInPage logInPage = new LogInPage(driver);
-
-        String user1 = prop.getProperty("username1");
-        String pass1 = prop.getProperty("password");
-
-
-            HomePage.accessLogInPage(driver);
-
-            logInPage.inputLogIn(user1, pass1);
-            logInPage.invalidUsernameOrPassword();
-
-    }
-
-    @Test //
-    public static void loginTest3() {
-        LogInPage logInPage = new LogInPage(driver);
-
-        String user1 = prop.getProperty("username");
-        String pass1 = prop.getProperty("password");
-
-            HomePage.accessLogInPage(driver);
-
-            logInPage.inputLogIn(user1, "");
-
-            logInPage.incompleteFields();
 
     }
 

@@ -26,33 +26,36 @@ public class FlightPurchasePage {
         driver.findElement(textbox_firstName_FlightPurchase).sendKeys(firstName);
         driver.findElement(textbox_lastName_FlightPurchase).sendKeys(lastName);
         driver.findElement(textbox_creditnumber_FlightPurchase).sendKeys(creditNumber);
+
+        //get user input to check validations
+        String firstNameTxt = driver.findElement(textbox_firstName_FlightPurchase).getAttribute("value");
+        String lastNameTxt = driver.findElement(textbox_lastName_FlightPurchase).getAttribute("value");
+        String creditNumberTxt = driver.findElement(textbox_creditnumber_FlightPurchase).getAttribute("value");
+
+
         driver.findElement(button_submitButton_FlightPurchase).click();
 
-        String currentURL = driver.getCurrentUrl();
+        checkValidations(initialURL, firstNameTxt, lastNameTxt, creditNumberTxt);
 
-        if (initialURL == currentURL) {
-            String firstNameFlightPurchase = driver.findElement(textbox_firstName_FlightPurchase).getText();
-            String lastNameFlightPurchase = driver.findElement(textbox_lastName_FlightPurchase).getText();
-            String creditNumberFlightPurchase = driver.findElement(textbox_creditnumber_FlightPurchase).getText();
-
-            checkValidationErrors(firstNameFlightPurchase, lastNameFlightPurchase, creditNumberFlightPurchase);
-        } else {
-            String expectedURL = "http://localhost:8080/mtours/servlet/com.mercurytours.servlet.PurchaseServlet?procSub=1&pg=1";
-            Assert.assertEquals(currentURL, expectedURL, "User is directed to the wrong page");
-        }
     }
 
 
-    public void checkValidationErrors(String firstNameFlightPurchase, String lastNameFlightPurchase, String creditNumberFlightPurchase) {
+    public void checkValidations(String initialURL, String firstNameTxt, String lastNameTxt, String creditNumberTxt) {
         SoftAssert softAssert = new SoftAssert();
+        String currentURL = driver.getCurrentUrl();
+        String expectedURL = "http://localhost:8080/mtours/servlet/com.mercurytours.servlet.PurchaseServlet?procSub=1&pg=1";
 
-        if (firstNameFlightPurchase.isEmpty() || lastNameFlightPurchase.isEmpty() || creditNumberFlightPurchase.isEmpty()) {
+
+        //Assert to check the user stays on page/is directed to the correct page; softAssert to check validation errors
+        if (firstNameTxt.isEmpty() || lastNameTxt.isEmpty() || creditNumberTxt.isEmpty()) {
+            Assert.assertEquals(currentURL, initialURL, "Form is submitted with invalid user input");
             softAssert.assertTrue(driver.getPageSource().contains("Error: Please fill all mandatory fields in red, and then resubmit the form."), "Validation error message not found: Please fill all mandatory fields");
         }
-        if (!creditNumberFlightPurchase.matches("\\d+")) {
+        if (!creditNumberTxt.matches("\\d+")) {
+            Assert.assertEquals(currentURL, initialURL, "Form is submitted with invalid user input");
             softAssert.assertTrue(driver.getPageSource().contains("Error: The credit card number is not valid"), "Validation error message not found: The credit card number is not valid");
         } else {
-            Assert.fail("Valid user input, form submission failed");
+            Assert.assertEquals(currentURL, expectedURL, "User is directed to the wrong page");
         }
 
         softAssert.assertAll();

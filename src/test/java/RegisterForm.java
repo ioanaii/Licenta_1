@@ -2,6 +2,7 @@ import Pages.HomePage;
 import Pages.RegisterPage;
 import Pages.RegisterConfirmationPage;
 import Pages.DataGenerator;
+import Pages.LogInPage;
 
 import java.util.UUID;
 import io.github.bonigarcia.wdm.WebDriverManager;
@@ -22,23 +23,26 @@ import java.io.FileInputStream;
 
 
 public class RegisterForm {
-    //private static Properties prop = new Properties();
+    private static Properties prop = new Properties();
     private static String uniqueUsername;
     private static String uniqueUsername2;
     private static String uniquePassword;
     private static String uniquePassword2;
+    private static String user1;
+    private static String pass1;
     private static WebDriver driver = null;
 
 
     @DataProvider
     public Object[][] testData() {
-        //DataGenerator dataGenerator = new DataGenerator();
-        //dataGenerator.updateJsonFile();
+        //generate new data in Json file
+        DataGenerator dataGenerator = new DataGenerator();
+        dataGenerator.updateJsonFile();
 
         try (FileReader reader = new FileReader("src/main/resources/testdata.json")) {
             Gson gson = new Gson();
             TestData[] testData = gson.fromJson(reader, TestData[].class);
-            return new Object[][] { { testData } };
+            return new Object[][]{{testData}};
         } catch (IOException e) {
             e.printStackTrace();
             // Handle the exception appropriately
@@ -46,6 +50,22 @@ public class RegisterForm {
         }
     }
 
+    @DataProvider
+        public Object[][] testData2(){
+            // Load the properties file to access the registered usernames
+            try (FileInputStream fileIn = new FileInputStream("src/main/resources/test2.properties")) {
+                prop.load(fileIn);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            user1 = prop.getProperty("username");
+            pass1 = prop.getProperty("password");
+
+            return new Object[][] {
+                    { user1, pass1}
+            };
+        }
         // Data model class representing the structure of the JSON data
         private static class TestData {
             private String firstName;
@@ -89,6 +109,8 @@ public class RegisterForm {
                 return postalCode;
             }
         }
+
+
 
     @BeforeTest
     //TO DO: Fix Selenium Grid
