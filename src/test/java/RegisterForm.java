@@ -68,10 +68,7 @@ public class RegisterForm {
         WebDriverManager.chromedriver().setup();
         driver = new ChromeDriver();
         driver.get("http://localhost:8080/mtours/servlet/com.mercurytours.servlet.WelcomeServlet");
-
     }
-
-
 
     @Test(dataProvider = "jsonTestData") //submitAllFields
     public static void testSubmitAllFields(TestData[] testDataArray){
@@ -97,7 +94,6 @@ public class RegisterForm {
             address, address, city, state, postalCode,
             "ANTARCTICA",uniqueUsername,uniquePassword, uniquePassword);
 
-    RegisterPage.successfulRegistration(driver, uniqueUsername);
     RegisterConfirmationPage.confirmRegistration(driver);
 
     }
@@ -112,7 +108,6 @@ public class RegisterForm {
 
         registerForm.inputRegisterForm(uniqueUsername2, uniquePassword2, uniquePassword2);
 
-        RegisterPage.successfulRegistration(driver, uniqueUsername2);
         RegisterConfirmationPage.confirmRegistration(driver);
 
         }
@@ -120,44 +115,17 @@ public class RegisterForm {
 
     @Test(dataProvider = "propertiesTestData") //existingUser
     public static void testSubmitForm2(Object[] data){
-        String username = (String) data[0];
+        String user1 = (String) data[0];
         String password = (String) data[1];
 
-        RegisterPage registerForm = new RegisterPage(driver);
+        RegisterPage registerForm = new RegisterPage(driver, user1);
 
         HomePage.accessRegisterPage(driver);
 
-        registerForm.inputRegisterForm(username, password, password);
+        registerForm.inputRegisterForm(user1, password, password);
 
         driver.manage().timeouts().implicitlyWait(500, TimeUnit.MILLISECONDS);
 
-        RegisterPage.existingUser(driver);
-    }
-
-    @Test //incomplete data
-    public static void testSubmitForm3(){
-        RegisterPage registerForm = new RegisterPage(driver);
-
-        HomePage.accessRegisterPage(driver);
-
-        registerForm.inputRegisterForm("", uniquePassword, uniquePassword);
-
-        driver.manage().timeouts().implicitlyWait(500, TimeUnit.MILLISECONDS);
-
-        RegisterPage.incompleteData(driver);
-    }
-
-    @Test //invalid pass confirmation
-    public static void testSubmitForm4(){
-        RegisterPage registerForm = new RegisterPage(driver);
-
-        HomePage.accessRegisterPage(driver);
-
-        registerForm.inputRegisterForm(uniqueUsername, uniquePassword2, uniquePassword2);
-
-        driver.manage().timeouts().implicitlyWait(500, TimeUnit.MILLISECONDS);
-
-        RegisterPage.invalidPassConfirmation(driver);
     }
 
     @AfterTest

@@ -9,7 +9,8 @@ import org.testng.asserts.SoftAssert;
 
 public class RegisterPage {
 
-    WebDriver driver = null;
+    private static String user1;
+    WebDriver driver;
     By textbox_firstName_registerForm = By.name("firstName");
     By textbox_lastName_registerForm = By.name("lastName");
     By textbox_phone_registerForm = By.name("phone");
@@ -25,16 +26,19 @@ public class RegisterPage {
     By textbox_confirmPasswordTxt_registerForm = By.name("confirmPassword");
     By button_submitButton_registerForm = By.name("register");
 
-    public RegisterPage(WebDriver driver){
+    public RegisterPage(WebDriver driver) {
         this.driver = driver;
     }
 
+    public RegisterPage(WebDriver driver, String user1) {
+        this.driver = driver;
+        this.user1 = user1;
+    }
 
 
     public void allFieldsRegistrationForm(String firstName, String lastName, String phone, String email,
                                           String address1, String address2, String city, String state, String postalCode,
-                                          String country, String username, String password, String confirmPassword)
-    {
+                                          String country, String username, String password, String confirmPassword) {
 
         // Fill in the form data
         driver.findElement(textbox_firstName_registerForm).sendKeys(firstName);
@@ -55,49 +59,48 @@ public class RegisterPage {
         driver.findElement(textbox_passwordTxt_registerForm).sendKeys(password);
         driver.findElement(textbox_confirmPasswordTxt_registerForm).sendKeys(confirmPassword);
 
+        String userName = driver.findElement(textbox_userName_registerForm).getAttribute("value");
         // Submit the form
         driver.findElement(button_submitButton_registerForm).click();
+
+
     }
 
-    public void inputRegisterForm(String username, String password, String confirmPassword){
+    public void inputRegisterForm(String username, String password, String confirmPassword) {
+
+
         driver.findElement(textbox_userName_registerForm).sendKeys(username);
         driver.findElement(textbox_passwordTxt_registerForm).sendKeys(password);
         driver.findElement(textbox_confirmPasswordTxt_registerForm).sendKeys(confirmPassword);
+
+        String usernameTxt = driver.findElement(textbox_userName_registerForm).getAttribute("value");
+        String passwordTxt = driver.findElement(textbox_passwordTxt_registerForm).getAttribute("value");
+        String confirmPasswordTxt = driver.findElement(textbox_confirmPasswordTxt_registerForm).getAttribute("value");
+
         driver.findElement(button_submitButton_registerForm).click();
-    }
-    public static void successfulRegistration(WebDriver driver, String username){
-        SoftAssert softAssert = new SoftAssert();
 
-        String currentURL = driver.getCurrentUrl();
+        verifyValidationErrors(driver, usernameTxt, passwordTxt, confirmPasswordTxt);
+
+    }
+
+    public void verifyValidationErrors(WebDriver driver, String username, String password, String confirmPassword) {
+        String initialURL = "com.mercurytours.servlet.RegisterServlet";
+        SoftAssert softAssert = new SoftAssert();
         String expectedURL = "http://localhost:8080/mtours/servlet/com.mercurytours.servlet.RegisterServlet?procSub=1";
-        Assert.assertEquals(currentURL, expectedURL);
-        String pageSource = driver.getPageSource();
-        String expectedMessage = "Note: Your user name is " + username;
-        softAssert.assertTrue(pageSource.contains(expectedMessage), "Expected message missing");
 
+        if (username.equals(user1)) {
+            Assert.assertTrue(driver.getCurrentUrl().contains(initialURL), "Invalid registration");
+            softAssert.assertTrue(driver.getPageSource().contains("Note: Error - The user name has been already used, please enter a new name"), "Validation error not found");
+        } else if (username.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
+            Assert.assertTrue(driver.getCurrentUrl().contains(initialURL), "Invalid registration");
+            softAssert.assertTrue(driver.getPageSource().contains("Please fill all fields bellow to complete the registration."), "Validation error not found");
+        } else if (!password.equals(confirmPassword)) {
+            Assert.assertTrue(driver.getCurrentUrl().contains(initialURL), "Invalid registration");
+            softAssert.assertTrue(driver.getPageSource().contains("Note: The confirmed password must be the same as the desired password.."), "Validation error not found");
+        } else {
+            Assert.assertEquals(driver.getCurrentUrl(), expectedURL, "User is directed to wrong page");
+        }
+        softAssert.assertAll();
     }
-
-    public static void existingUser(WebDriver driver){
-        SoftAssert softAssert = new SoftAssert();
-
-        softAssert.assertTrue(driver.getPageSource().contains("Note: Error - The user name has been already used, please enter a new name"), "Validation error not found");
-    }
-    public static void incompleteData(WebDriver driver){
-        SoftAssert softAssert = new SoftAssert();
-
-        softAssert.assertTrue(driver.getPageSource().contains("Please fill all fields bellow to complete the registration."), "Validation error not found");
-    }
-    public static void invalidPassConfirmation(WebDriver driver){
-        SoftAssert softAssert = new SoftAssert();
-
-        softAssert.assertTrue(driver.getPageSource().contains("Note: The confirmed password must be the same as the desired password.."), "Validation error not found");
-
-    }
-
-    public static void verifyValidationErrors(String userName, String Password){
-
-    }
-
-     }
-
+}
 

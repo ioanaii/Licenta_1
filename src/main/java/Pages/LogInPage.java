@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.util.Properties;
 
 public class LogInPage {
-    private static Properties prop = new Properties();
     private static String user1;
     private static String pass1;
     private static String user2;
