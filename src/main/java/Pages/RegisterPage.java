@@ -2,15 +2,14 @@ package Pages;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.support.ui.Select;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.WebDriver;
 import org.testng.Assert;
 import org.testng.asserts.SoftAssert;
 
 public class RegisterPage {
 
-    private static String user1;
-    WebDriver driver;
+    private String existingUser;
+    private WebDriver driver;
     By textbox_firstName_registerForm = By.name("firstName");
     By textbox_lastName_registerForm = By.name("lastName");
     By textbox_phone_registerForm = By.name("phone");
@@ -30,11 +29,12 @@ public class RegisterPage {
         this.driver = driver;
     }
 
-    public RegisterPage(WebDriver driver, String user1) {
-        this.driver = driver;
-        this.user1 = user1;
+    public String getExistingUser() {
+        return existingUser;
     }
-
+    public void setExistingUser(String user1) {
+        this.existingUser = user1;
+    }
 
     public void allFieldsRegistrationForm(String firstName, String lastName, String phone, String email,
                                           String address1, String address2, String city, String state, String postalCode,
@@ -88,15 +88,15 @@ public class RegisterPage {
         SoftAssert softAssert = new SoftAssert();
         String expectedURL = "http://localhost:8080/mtours/servlet/com.mercurytours.servlet.RegisterServlet?procSub=1";
 
-        if (username.equals(user1)) {
+        if (username.equals(existingUser)) {
             Assert.assertTrue(driver.getCurrentUrl().contains(initialURL), "Invalid registration");
-            softAssert.assertTrue(driver.getPageSource().contains("Note: Error - The user name has been already used, please enter a new name"), "Validation error not found");
+            softAssert.assertTrue(driver.getPageSource().contains("Note: Error - The user name has been already used, please enter a new name"), "Validation error not found or is incorrect");
         } else if (username.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
             Assert.assertTrue(driver.getCurrentUrl().contains(initialURL), "Invalid registration");
-            softAssert.assertTrue(driver.getPageSource().contains("Please fill all fields bellow to complete the registration."), "Validation error not found");
+            softAssert.assertTrue(driver.getPageSource().contains("Please fill all fields bellow to complete the registration."), "Validation error not found or is incorrect");
         } else if (!password.equals(confirmPassword)) {
             Assert.assertTrue(driver.getCurrentUrl().contains(initialURL), "Invalid registration");
-            softAssert.assertTrue(driver.getPageSource().contains("Note: The confirmed password must be the same as the desired password.."), "Validation error not found");
+            softAssert.assertTrue(driver.getPageSource().contains("Note: The confirmed password must be the same as the desired password.."), "Validation error not found or is incorrect");
         } else {
             Assert.assertEquals(driver.getCurrentUrl(), expectedURL, "User is directed to wrong page");
         }

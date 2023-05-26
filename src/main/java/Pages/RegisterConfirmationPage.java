@@ -6,7 +6,7 @@ import org.testng.asserts.SoftAssert;
 import org.openqa.selenium.By;
 
 public class RegisterConfirmationPage {
-    WebDriver driver = null;
+    WebDriver driver;
     By hyperlink_signIn_RegisterConfirmationPage = By.name("sign-in");
     public RegisterConfirmationPage(WebDriver driver){
         this.driver = driver;

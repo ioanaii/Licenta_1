@@ -1,10 +1,10 @@
 import Pages.HomePage;
 import Pages.RegisterPage;
 import Pages.RegisterConfirmationPage;
-import Pages.DataGenerator;
-import Pages.LogInPage;
-import Pages.DataLoader;
-import Pages.DataLoader.TestData;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import utils.DataLoader;
+import utils.DataLoader.TestData;
+import utils.DataGenerator;
 
 import java.util.UUID;
 import io.github.bonigarcia.wdm.WebDriverManager;
@@ -13,25 +13,23 @@ import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 import org.testng.annotations.DataProvider;
+import org.testng.annotations.BeforeMethod;
 import org.openqa.selenium.chrome.ChromeDriver;
-import java.io.IOException;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.openqa.selenium.By;
+
 import java.util.Properties;
-import com.google.gson.Gson;
-import java.io.FileReader;
 import java.util.concurrent.TimeUnit;
-import java.io.FileOutputStream;
-import java.io.FileInputStream;
 
 
 
 public class RegisterForm {
-    private static Properties prop = new Properties();
     private static String uniqueUsername;
-    private static String uniqueUsername2;
     private static String uniquePassword;
-    private static String uniquePassword2;
     private static WebDriver driver = null;
-    //String user1 = prop.getProperty("username");
+    private static RegisterPage registerForm;
+    private static HomePage homePage;
+    private static RegisterConfirmationPage registerConfirmationPage;
 
     @DataProvider
     public Object[][] jsonTestData() {
@@ -45,7 +43,13 @@ public class RegisterForm {
 
     }
 
+    @BeforeMethod
+    public void generateUniqueUsers() {
+        uniqueUsername = "username_" + UUID.randomUUID().toString().substring(0, 8);
+        uniquePassword = "pass_" + UUID.randomUUID().toString().substring(0, 8);
 
+
+    }
 
     @BeforeTest
     //TO DO: Fix Selenium Grid
@@ -62,21 +66,23 @@ public class RegisterForm {
     }*/
     //To be used until figuring out Selenium grid
     public static void setUp(){
-        //DataGenerator dataGenerator = new DataGenerator();
-        //dataGenerator.updateJsonFile();
+
+
 
         WebDriverManager.chromedriver().setup();
         driver = new ChromeDriver();
         driver.get("http://localhost:8080/mtours/servlet/com.mercurytours.servlet.WelcomeServlet");
+
+        registerForm = new RegisterPage(driver);
+        homePage = new HomePage(driver);
+        registerConfirmationPage = new RegisterConfirmationPage(driver);
+
+
     }
 
-    @Test(dataProvider = "jsonTestData") //submitAllFields
-    public static void testSubmitAllFields(TestData[] testDataArray){
-        TestData testData = testDataArray[0]; // Use the first element from the array
-
-        // Generate a unique username using UUID
-        uniqueUsername = "username_" + UUID.randomUUID().toString().substring(0, 8);
-        uniquePassword = "pass_" + UUID.randomUUID().toString().substring(0, 8);
+    @Test(dataProvider = "jsonTestData")
+    public static void registerUser_submitAllFields_Test(TestData[] testDataArray){
+        TestData testData = testDataArray[0];
         String firstName = testData.getFirstName();
         String lastName = testData.getLastName();
         String phoneNumber = testData.getPhoneNumber();
@@ -86,50 +92,58 @@ public class RegisterForm {
         String state = testData.getState();
         String postalCode = testData.getPostalCode();
 
-    RegisterPage registerForm = new RegisterPage(driver);
-
-    HomePage.accessRegisterPage(driver);
+    homePage.accessRegisterPage(driver);
 
     registerForm.allFieldsRegistrationForm(firstName, lastName, phoneNumber,email,
             address, address, city, state, postalCode,
             "ANTARCTICA",uniqueUsername,uniquePassword, uniquePassword);
 
-    RegisterConfirmationPage.confirmRegistration(driver);
+    registerConfirmationPage.confirmRegistration(driver);
 
     }
-    @Test //successfulRegistration
-    public static void testSubmitForm(){
-        uniqueUsername2 = "username_" + UUID.randomUUID().toString().substring(0, 8);
-        uniquePassword2 = "pass_" + UUID.randomUUID().toString().substring(0, 8);
+    @Test
+    public static void registerUser_submitRequiredFields_Test(){
 
-        RegisterPage registerForm = new RegisterPage(driver);
-
-        HomePage.accessRegisterPage(driver);
-
-        registerForm.inputRegisterForm(uniqueUsername2, uniquePassword2, uniquePassword2);
-
-        RegisterConfirmationPage.confirmRegistration(driver);
+        homePage.accessRegisterPage(driver);
+        registerForm.inputRegisterForm(uniqueUsername, uniquePassword, uniquePassword);
+        registerConfirmationPage.confirmRegistration(driver);
 
         }
 
-
-    @Test(dataProvider = "propertiesTestData") //existingUser
-    public static void testSubmitForm2(Object[] data){
+    @Test(dataProvider = "propertiesTestData")
+    public static void registerUser_validationErrors_Test(Object[] data){
         String user1 = (String) data[0];
         String password = (String) data[1];
+        String user2 = (String) data[2];
+        String password2 = (String) data[3];
 
-        RegisterPage registerForm = new RegisterPage(driver, user1);
+        registerForm.getExistingUser();
+        registerForm.setExistingUser(user1);
 
-        HomePage.accessRegisterPage(driver);
+        homePage.accessRegisterPage(driver);
 
-        registerForm.inputRegisterForm(user1, password, password);
+        //incomplete fields
+        registerForm.inputRegisterForm("", uniquePassword, uniquePassword);
+        registerForm.inputRegisterForm(uniqueUsername, "", uniquePassword);
+        registerForm.inputRegisterForm(uniqueUsername, uniquePassword, "");
 
-        driver.manage().timeouts().implicitlyWait(500, TimeUnit.MILLISECONDS);
+        //existing user
+        registerForm.inputRegisterForm(user1, uniquePassword, uniquePassword);
+
+        //invalid password
+        registerForm.inputRegisterForm(uniqueUsername, password, password2);
+        registerForm.inputRegisterForm(uniqueUsername, password2, password);
 
     }
 
+    @Test
+    public static void updateJson(){
+        DataGenerator dataGenerator = new DataGenerator();
+        dataGenerator.updateJsonFile();
+    }
+
     @AfterTest
-    public void teardDownTest(){
+    public void tearDownTest(){
         driver.close();
         driver.quit();
         System.out.println("Test completed successfully");

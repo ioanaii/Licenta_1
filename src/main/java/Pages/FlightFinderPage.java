@@ -8,7 +8,7 @@ import org.testng.Assert;
 import org.testng.asserts.SoftAssert;
 
 public class FlightFinderPage {
-    WebDriver driver = null;
+    WebDriver driver;
     By radioButton_flightType_roundTrip_FlightFinder = By.cssSelector("input[type='radio'][name='tripType'][value='roundtrip']");
     By radioButton_flightType_oneWay_FlightFinder = By.cssSelector("input[type='radio'][name='tripType'][value='oneway']");
     By dropdown_passCount_FlightFinder = By.name("passCount");

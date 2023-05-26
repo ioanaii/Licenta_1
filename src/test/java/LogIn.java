@@ -1,38 +1,26 @@
 import Pages.HomePage;
-import Pages.RegisterPage;
-import Pages.RegisterConfirmationPage;
 import Pages.LogInPage;
 
 
-import java.net.URL;
-import java.util.UUID;
 import io.github.bonigarcia.wdm.WebDriverManager;
-import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.WebDriver;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-import org.openqa.selenium.remote.CapabilityType;
-import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import utils.DataLoader;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.Properties;
 
 public class LogIn{
     private static Properties prop = new Properties();
     private static WebDriver driver = null;
-    private static String user1;
-    private static String pass1;
-    private static String user2;
-    private static String pass2;
+
 
     @DataProvider
     public Object[][] propertiesTestData() {
-        return Pages.DataLoader.loadFromPropertiesFile("src/main/resources/test2.properties", "username", "password", "username2","password2");
+        return DataLoader.loadFromPropertiesFile("src/main/resources/test2.properties", "username", "password", "username2","password2");
 
     }
     @BeforeTest
