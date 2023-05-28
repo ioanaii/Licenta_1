@@ -1,5 +1,4 @@
-import pages.HomePage;
-import pages.LogInPage;
+import pages.*;
 
 
 import io.github.bonigarcia.wdm.WebDriverManager;

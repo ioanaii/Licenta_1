@@ -1,7 +1,5 @@
 import org.testng.Assert;
-import pages.HomePage;
-import pages.RegisterPage;
-import pages.RegisterConfirmationPage;
+import pages.*;
 import utils.DataLoader;
 import utils.DataLoader.TestData;
 

@@ -1,9 +1,4 @@
-import pages.FlightFinderPage;
-import pages.FlightPurchasePage;
-import pages.FlightSelectionPage;
-import pages.LogInPage;
-import pages.HomePage;
-import pages.ItineraryPage;
+import pages.*;
 
 import utils.DataLoader;
 
