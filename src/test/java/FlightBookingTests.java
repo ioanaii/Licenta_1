@@ -12,6 +12,7 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.testng.asserts.SoftAssert;
+import org.testng.Assert;
 
 
 public class FlightBookingTests {
@@ -51,12 +52,12 @@ public class FlightBookingTests {
         String user2 = (String) data[2];
         String pass2 = (String) data[3];
 
-
+        homePage.accessPage("signOn");
         logIn.inputLogIn(user1, pass1);
 
         flightFind.enterFlightDetails("roundtrip", "2", "Frankfurt", "Feb", "21", "Acapulco", "Feb", "21", "Coach", "No Preference");
         flightSelect.selectFlights(1, 2);
-        flightPurchase.inputFlightPurchase("John", "Dose", "1123");
+        flightPurchase.inputFlightPurchase("John", "Doe", "1123");
 
         homePage.accessPage("itinerary");
         itinerary.removeSelected();
@@ -74,7 +75,7 @@ public class FlightBookingTests {
         logIn.inputLogIn(user2, pass2);
 
         flightFind.enterFlightDetails("oneway", "2", "Frankfurt", "Feb", "21", "Acapulco", "Feb", "21", "Business", "Unified Airlines");
-        flightSelect.selectFlights(1, 2);
+        flightSelect.selectFlightsOneWay(0);
         flightPurchase.inputFlightPurchase("John", "Doe", "1123");
 
         homePage.accessPage("itinerary");
@@ -89,11 +90,14 @@ public class FlightBookingTests {
         String user2 = (String) data[2];
         String pass2 = (String) data[3];
 
+        String expectedURL = "com.mercurytours.servlet.ReservationServlet";
         SoftAssert softAssert = new SoftAssert();
 
+        homePage.accessPage("signOn");
         logIn.inputLogIn(user2, pass2);
 
         validateFlightFinderFilters(softAssert, "roundtrip", "2", "Frankfurt", "Feb", "22", "Acapulco", "Feb", "21", "Coach", "Unified Airlines");
+        Assert.assertTrue(driver.getCurrentUrl().endsWith(expectedURL), "Incorrect URL");
         softAssert.assertAll();
     }
 
@@ -104,15 +108,23 @@ public class FlightBookingTests {
         String user2 = (String) data[2];
         String pass2 = (String) data[3];
 
+        String expectedURL = "com.mercurytours.servlet.PurchaseServlet";
+
         SoftAssert softAssert = new SoftAssert();
+
+        homePage.accessPage("signOn");
         logIn.inputLogIn(user2, pass2);
 
         flightFind.enterFlightDetails("roundtrip", "2", "Frankfurt", "Feb", "22", "Acapulco", "Feb", "24", "Coach", "Unified Airlines");
         flightSelect.selectFlights(0, 0);
         validateFlightPurchaseIncompleteFields(softAssert, "", "Doe", "49501791335");
+        Assert.assertTrue(driver.getCurrentUrl().contains(expectedURL));
         validateFlightPurchaseIncompleteFields(softAssert, "John", "", "49501791335");
+        Assert.assertTrue(driver.getCurrentUrl().contains(expectedURL));
         validateFlightPurchaseIncompleteFields(softAssert, "John", "Doe", "");
+        Assert.assertTrue(driver.getCurrentUrl().contains(expectedURL));
         validateFlightPurchaseInvalidCard(softAssert, "John", "Doe", "test49501791335");
+        Assert.assertTrue(driver.getCurrentUrl().contains(expectedURL));
 
         softAssert.assertAll();
     }

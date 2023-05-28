@@ -8,6 +8,7 @@ import org.testng.annotations.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import utils.DataLoader;
 import org.testng.asserts.SoftAssert;
+import org.testng.Assert;
 
 public class LogInTests {
     private static WebDriver driver = null;
@@ -66,15 +67,21 @@ public class LogInTests {
 
         SoftAssert softAssert = new SoftAssert();
 
+        String expectedURL = driver.getCurrentUrl();
+
         homePage.accessPage("signOn");
 
         //invalid username or password
         validateInvalidCredentials(softAssert, user1, pass2);
+        Assert.assertTrue(driver.getCurrentUrl().equals(expectedURL));
         validateInvalidCredentials(softAssert, user2, pass1);
+        Assert.assertTrue(driver.getCurrentUrl().equals(expectedURL));
 
         //incomplete fields
         validateIncompleteFields(softAssert, "", pass1);
+        Assert.assertTrue(driver.getCurrentUrl().equals(expectedURL));
         validateIncompleteFields(softAssert, user1, "");
+        Assert.assertTrue(driver.getCurrentUrl().equals(expectedURL));
 
         softAssert.assertAll();
     }

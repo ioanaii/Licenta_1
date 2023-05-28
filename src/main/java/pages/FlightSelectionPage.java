@@ -43,4 +43,21 @@ public class FlightSelectionPage {
 
     }
 
+    public void selectFlightsOneWay(int outFlightIndex) {
+        List<WebElement> outFlightRadioButtons = driver.findElements(radio_outFlightFlightSelectionPage);
+        int outFlightCount = outFlightRadioButtons.size();
+
+
+        if (outFlightIndex >= 0 && outFlightIndex < outFlightCount) {
+            WebElement outFlightRadioButton = outFlightRadioButtons.get(outFlightIndex);
+            outFlightRadioButton.click();
+        } else {
+            throw new IllegalArgumentException("Invalid outFlightIndex provided.");
+
+        }
+
+        driver.findElement(button_submitButton_FlightSelectionPage).click();
+
+    }
+
 }

@@ -1,8 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 <suite name = "Test Suite - Register Accounts">
-    <test name = "Test">
+    <test name = "Register Accounts">
         <classes>
-            <class name="RegisterForm">
-            </class>
+            <class name="RegisterForm"/>
         </classes>
     </test>
 </suite>

@@ -1,18 +1,14 @@
+import org.testng.Assert;
 import pages.HomePage;
 import pages.RegisterPage;
 import pages.RegisterConfirmationPage;
 import utils.DataLoader;
 import utils.DataLoader.TestData;
-import utils.DataGenerator;
 
 import java.util.UUID;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.WebDriver;
-import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Test;
-import org.testng.annotations.DataProvider;
-import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.testng.asserts.SoftAssert;
 
@@ -59,10 +55,7 @@ public class RegisterForm {
 
     }*/
     //To be used until figuring out Selenium grid
-    public static void setUp(){
-
-
-
+    public void setUp(){
         WebDriverManager.chromedriver().setup();
         driver = new ChromeDriver();
         driver.get("http://localhost:8080/mtours/servlet/com.mercurytours.servlet.WelcomeServlet");
@@ -75,7 +68,7 @@ public class RegisterForm {
     }
 
     @Test(dataProvider = "jsonTestData")
-    public static void registerUser_submitAllFields_Test(TestData[] testDataArray){
+    public void registerUser_submitAllFields_Test(TestData[] testDataArray){
         TestData testData = testDataArray[0];
         String firstName = testData.getFirstName();
         String lastName = testData.getLastName();
@@ -88,13 +81,14 @@ public class RegisterForm {
 
         homePage.accessPage("register");
 
-    registerForm.allFieldsRegistrationForm(firstName, lastName, phoneNumber,email,
+        registerForm.allFieldsRegistrationForm(firstName, lastName, phoneNumber,email,
             address, address, city, state, postalCode,
             "ANTARCTICA",uniqueUsername,uniquePassword, uniquePassword);
 
+
     }
     @Test
-    public static void registerUser_submitRequiredFields_Test(){
+    public void registerUser_submitRequiredFields_Test(){
 
         homePage.accessPage("register");
         registerForm.inputRegisterForm(uniqueUsername, uniquePassword, uniquePassword);
@@ -102,27 +96,33 @@ public class RegisterForm {
         }
 
     @Test(dataProvider = "propertiesTestData")
-    public static void registerUser_validationErrors_Test(Object[] data) {
+    public void registerUser_validationErrors_Test(Object[] data) {
         String user1 = (String) data[0];
         String password = (String) data[1];
         String user2 = (String) data[2];
         String password2 = (String) data[3];
 
         homePage.accessPage("register");
-
+        String expectedURL = "com.mercurytours.servlet.RegisterServlet";
         SoftAssert softAssert = new SoftAssert();
 
         //incomplete fields
         validateIncompleteFields(softAssert, "", uniquePassword, uniquePassword);
+        Assert.assertTrue(driver.getCurrentUrl().contains(expectedURL));
         validateIncompleteFields(softAssert, uniqueUsername, "", uniquePassword);
+        Assert.assertTrue(driver.getCurrentUrl().contains(expectedURL));
         validateIncompleteFields(softAssert, uniqueUsername, uniquePassword, "");
+        Assert.assertTrue(driver.getCurrentUrl().contains(expectedURL));
 
         //existing user
         validateExistingUser(softAssert, user1, uniquePassword, uniquePassword);
+        Assert.assertTrue(driver.getCurrentUrl().contains(expectedURL));
 
         //invalid password
         validateInvalidPassword(softAssert, uniqueUsername, password, password2);
+        Assert.assertTrue(driver.getCurrentUrl().contains(expectedURL));
         validateInvalidPassword(softAssert, uniqueUsername, password2, password);
+        Assert.assertTrue(driver.getCurrentUrl().contains(expectedURL));
 
         softAssert.assertAll();
     }
