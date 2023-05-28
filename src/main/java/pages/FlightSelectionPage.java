@@ -1,11 +1,8 @@
-package Pages;
+package pages;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.By;
-import org.openqa.selenium.support.ui.Select;
-import org.testng.Assert;
-import org.testng.asserts.SoftAssert;
 import java.util.List;
 
 
@@ -44,9 +41,6 @@ public class FlightSelectionPage {
 
         driver.findElement(button_submitButton_FlightSelectionPage).click();
 
-        String currentURL = driver.getCurrentUrl();
-        String expectedURL = "http://localhost:8080/mtours/servlet/com.mercurytours.servlet.PurchaseServlet";
-        Assert.assertEquals(currentURL, expectedURL, "User is directed to wrong page");
     }
 
 }

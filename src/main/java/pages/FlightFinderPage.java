@@ -1,11 +1,9 @@
-package Pages;
+package pages;
 
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.By;
 import org.openqa.selenium.support.ui.Select;
-import org.testng.Assert;
-import org.testng.asserts.SoftAssert;
+
 
 public class FlightFinderPage {
     WebDriver driver;
@@ -82,67 +80,7 @@ public class FlightFinderPage {
         Select airlineDropdown = new Select (driver.findElement(dropdown_airline_FlightFinder));
         airlineDropdown.selectByVisibleText(airline);
 
-        String selectedFromMonth = fromMonthDropdown.getFirstSelectedOption().getText();
-        String selectedFromDay = fromDayDropdown.getFirstSelectedOption().getText();
-        String selectedToMonth = toMonthDropdown.getFirstSelectedOption().getText();
-        String selectedToDay = toDayDropdown.getFirstSelectedOption().getText();
-
         driver.findElement(button_submitButton_FlightFinder).click();
-
-        verifyValidations(initialURL, selectedFromMonth, selectedFromDay, selectedToMonth, selectedToDay);
-
-    }
-
-
-    public void verifyValidations (String initialURL, String selectedFromMonth, String selectedFromDay, String selectedToMonth, String selectedToDay) {
-        SoftAssert softAssert= new SoftAssert();
-
-        String currentURL = driver.getCurrentUrl();
-        String expectedURL = "http://localhost:8080/mtours/servlet/com.mercurytours.servlet.ReservationServlet?procSub=1&pg=1";
-
-        int departureMonth = getMonthIndex(selectedFromMonth);
-        int departureDay = Integer.parseInt(selectedFromDay);
-        int returnMonth = getMonthIndex(selectedToMonth);
-        int returnDay = Integer.parseInt(selectedToDay);
-
-        if (departureMonth > returnMonth || (departureMonth == returnMonth && departureDay > returnDay)) {
-            Assert.assertEquals(initialURL, currentURL, "Form is submitted with invalid user input");
-            softAssert.assertTrue(driver.getPageSource().contains("Departure date is greater than the return date."), "Validation error not found");
-        }else {
-            Assert.assertEquals(currentURL, expectedURL, "User is directed to the wrong page");
-        }
-
-        softAssert.assertAll();
-    }
-    private int getMonthIndex(String month) {
-        switch (month) {
-            case "Jan":
-                return 1;
-            case "Feb":
-                return 2;
-            case "Mar":
-                return 3;
-            case "Apr":
-                return 4;
-            case "May":
-                return 5;
-            case "Jun":
-                return 6;
-            case "Jul":
-                return 7;
-            case "Aug":
-                return 8;
-            case "Sep":
-                return 9;
-            case "Oct":
-                return 10;
-            case "Nov":
-                return 11;
-            case "Dec":
-                return 12;
-            default:
-                return -1; // Invalid month
-        }
     }
 
 }

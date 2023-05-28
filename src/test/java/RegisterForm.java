@@ -1,7 +1,6 @@
-import Pages.HomePage;
-import Pages.RegisterPage;
-import Pages.RegisterConfirmationPage;
-import org.openqa.selenium.support.ui.ExpectedConditions;
+import pages.HomePage;
+import pages.RegisterPage;
+import pages.RegisterConfirmationPage;
 import utils.DataLoader;
 import utils.DataLoader.TestData;
 import utils.DataGenerator;
@@ -15,12 +14,7 @@ import org.testng.annotations.Test;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.BeforeMethod;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.support.ui.WebDriverWait;
-import org.openqa.selenium.By;
-
-import java.util.Properties;
-import java.util.concurrent.TimeUnit;
-
+import org.testng.asserts.SoftAssert;
 
 
 public class RegisterForm {
@@ -92,54 +86,45 @@ public class RegisterForm {
         String state = testData.getState();
         String postalCode = testData.getPostalCode();
 
-    homePage.accessRegisterPage(driver);
+        homePage.accessPage("register");
 
     registerForm.allFieldsRegistrationForm(firstName, lastName, phoneNumber,email,
             address, address, city, state, postalCode,
             "ANTARCTICA",uniqueUsername,uniquePassword, uniquePassword);
 
-    registerConfirmationPage.confirmRegistration(driver);
-
     }
     @Test
     public static void registerUser_submitRequiredFields_Test(){
 
-        homePage.accessRegisterPage(driver);
+        homePage.accessPage("register");
         registerForm.inputRegisterForm(uniqueUsername, uniquePassword, uniquePassword);
-        registerConfirmationPage.confirmRegistration(driver);
 
         }
 
     @Test(dataProvider = "propertiesTestData")
-    public static void registerUser_validationErrors_Test(Object[] data){
+    public static void registerUser_validationErrors_Test(Object[] data) {
         String user1 = (String) data[0];
         String password = (String) data[1];
         String user2 = (String) data[2];
         String password2 = (String) data[3];
 
-        registerForm.getExistingUser();
-        registerForm.setExistingUser(user1);
+        homePage.accessPage("register");
 
-        homePage.accessRegisterPage(driver);
+        SoftAssert softAssert = new SoftAssert();
 
         //incomplete fields
-        registerForm.inputRegisterForm("", uniquePassword, uniquePassword);
-        registerForm.inputRegisterForm(uniqueUsername, "", uniquePassword);
-        registerForm.inputRegisterForm(uniqueUsername, uniquePassword, "");
+        validateIncompleteFields(softAssert, "", uniquePassword, uniquePassword);
+        validateIncompleteFields(softAssert, uniqueUsername, "", uniquePassword);
+        validateIncompleteFields(softAssert, uniqueUsername, uniquePassword, "");
 
         //existing user
-        registerForm.inputRegisterForm(user1, uniquePassword, uniquePassword);
+        validateExistingUser(softAssert, user1, uniquePassword, uniquePassword);
 
         //invalid password
-        registerForm.inputRegisterForm(uniqueUsername, password, password2);
-        registerForm.inputRegisterForm(uniqueUsername, password2, password);
+        validateInvalidPassword(softAssert, uniqueUsername, password, password2);
+        validateInvalidPassword(softAssert, uniqueUsername, password2, password);
 
-    }
-
-    @Test
-    public static void updateJson(){
-        DataGenerator dataGenerator = new DataGenerator();
-        dataGenerator.updateJsonFile();
+        softAssert.assertAll();
     }
 
     @AfterTest
@@ -148,5 +133,21 @@ public class RegisterForm {
         driver.quit();
         System.out.println("Test completed successfully");
     }
+    private static void validateIncompleteFields(SoftAssert softAssert, String username, String password, String confirmPassword) {
+        registerForm.inputRegisterForm(username, password, confirmPassword);
+        softAssert.assertTrue(driver.getPageSource().contains("Please fill all fields bellow to complete the registration."),
+                "Validation error not found or is incorrect: Incomplete fields");
+    }
 
+    private static void validateExistingUser(SoftAssert softAssert, String username, String password, String confirmPassword) {
+        registerForm.inputRegisterForm(username, password, confirmPassword);
+        softAssert.assertTrue(driver.getPageSource().contains("Note: Error - The user name has been already used, please enter a new name"),
+                "Validation error not found or is incorrect: User name already used");
+    }
+
+    private static void validateInvalidPassword(SoftAssert softAssert, String username, String password, String confirmPassword) {
+        registerForm.inputRegisterForm(username, password, confirmPassword);
+        softAssert.assertTrue(driver.getPageSource().contains("Note: The confirmed password must be the same as the desired password.."),
+                "Validation error not found or is incorrect: Password mismatch");
+    }
 }
