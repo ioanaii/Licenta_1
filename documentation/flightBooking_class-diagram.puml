@@ -1,0 +1,95 @@
+@startuml Flight Booking Tests - Class Diagram
+
+FlightBookingTests *-- FlightFinderPage
+FlightBookingTests *-- FlightPurchasePage
+FlightBookingTests *-- FlightSelectionPage
+FlightBookingTests *-- ItineraryPage
+FlightBookingTests o-- HomePage
+FlightBookingTests o-- LogInPage
+FlightBookingTests -- DataLoader
+
+class FlightBookingTests{
+    - WebDriver driver
+    __
+    + flightBooking_roundTrip_Test(Object[] data)
+    + flightBooking_oneWay_Test(Object[] data)
+    + flightBooking_invalidDates_Test(Object[] data)
+    + flightBooking_checkFlightPurchaseValidationErrors_Test(Object[] data)
+    __
+    - validateFlightFinderFilters(...)
+    - validateFlightPurchaseIncompleteFields(...)
+    - validateFlightPurchaseInvalidCard(...)
+}
+
+class FlightFinderPage
+      {
+    - WebDriver driver
+    - By radioButton_flightType_roundTrip_FlightFinder
+    - By dropdown_passCount_FlightFinder 
+    - By button_submitButton_FlightFinder
+    - (..)
+    __
+    + enterFlightDetails(String tripType, String passCount, String fromPort, ... )
+    }
+class FlightPurchasePage
+      {
+    - WebDriver driver
+    - By textbox_firstName_FlightPurchase
+    - By textbox_lastName_FlightPurchase 
+    - By textbox_creditnumber_FlightPurchase
+    - By button_submitButton_FlightPurchase
+    __
+    + inputFlightPurchase(String firstName, String lastName, String creditNumber)
+    }
+
+class FlightSelectionPage
+      {
+    - WebDriver driver
+    - By radio_outFlightFlightSelectionPage
+    - By radio_inFlightFlightSelectionPage 
+    - By button_submitButton_FlightSelectionPage
+    __
+    + selectFlights(int outFlightIndex, int inFlightIndex)
+    + selectFlightsOneWay(int outFlightIndex)
+    }
+
+class ItineraryPage
+      {
+    - WebDriver driver
+    - By radio_bookedFlight_Itinerary
+    - By button_removeSelected_Itinerary 
+    - By button_removeAll_Itinerary
+    __
+    + removeSelected()
+    + removeAll()
+    }
+
+class HomePage
+    {
+    - WebDriver driver
+    - By button_SignOn_SignOff
+    - By button_Register
+    - By button_Home
+    - By button_Flights
+    - By button_Itinerary
+    __
+    + registerPageButton()
+    + accessPage()
+    }
+class LogInPage
+      {
+    - WebDriver driver
+    - By textbox_userName_LogInPage
+    - By textbox_password_LogInPage 
+    - By button_submitButton_LogInPage
+    __
+    + inputLogIn()
+    }
+    
+class DataLoader
+      {
+    __
+    + loadFromJsonFile(String filePath) 
+    + loadFromPropertiesFile(String filePath, ...)
+    }
+@enduml

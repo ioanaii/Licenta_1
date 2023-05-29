@@ -1,0 +1,62 @@
+@startuml Register Form - Class Diagram
+
+RegisterForm *-- RegisterPage
+RegisterForm *-- RegisterConfirmationPage
+RegisterForm o-- HomePage
+RegisterForm -- DataLoader
+
+class RegisterForm{
+    - String uniqueUserName
+    - String uniquePassword
+    - WebDriver driver
+    __
+    + registerUser_submitAllFields_Test(TestData[] testDataArray)
+    + registerUser_submitRequiredFields_Test()
+    + registerUser_validationErrors_Test(Object[] data)
+    __
+    - validateIncompleteFields(...)
+    - validateExistingUser(...)
+    - validateInvalidPassword(...)
+}
+
+class RegisterPage
+      {
+    - WebDriver driver
+    - By firstName
+    - By lastName 
+    - (..)
+    - By register
+    __
+    + allFieldsRegistrationForm(tring firstName, String lastName, ...)
+    + inputRegisterForm(String username, ...)
+    }
+
+class RegisterConfirmationPage
+      {
+    - WebDriver driver
+    - By hyperlink_signIn_RegisterConfirmationPage
+    __
+    + confirmRegistration()
+    + signInRedirect()
+    }
+
+class HomePage
+    {
+    - WebDriver driver
+    - By button_SignOn_SignOff
+    - By button_Register
+    - By button_Home
+    - By button_Flights
+    - By button_Itinerary
+    __
+    + registerPageButton()
+    + accessPage(String page)
+    }
+
+    class DataLoader
+      {
+    __
+    + loadFromJsonFile(String filePath) 
+    + loadFromPropertiesFile(String filePath, ...)
+    }
+@enduml
