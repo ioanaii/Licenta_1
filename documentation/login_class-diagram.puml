@@ -1,0 +1,46 @@
+@startuml Login Tests - Class Diagram
+
+LoginTests *-- LogInPage
+LoginTests o-- HomePage
+LoginTests -- DataLoader
+
+class LoginTests{
+    - WebDriver driver
+    __
+    + login_successfulLogin_Test()
+    + login_verifyValidations_Test()
+    __
+    - validateIncompleteFields()
+    - validateInvalidCredentials()
+}
+
+class LogInPage
+      {
+    - WebDriver driver
+    - By textbox_userName_LogInPage
+    - By textbox_password_LogInPage 
+    - By button_submitButton_LogInPage
+    __
+    + inputLogIn()
+    }
+
+class HomePage
+    {
+    - WebDriver driver
+    - By button_SignOn_SignOff
+    - By button_Register
+    - By button_Home
+    - By button_Flights
+    - By button_Itinerary
+    __
+    + registerPageButton()
+    + accessPage(String page)
+    }
+        
+class DataLoader
+      {
+    __
+    + loadFromJsonFile(String filePath) 
+    + loadFromPropertiesFile(String filePath, ...)
+    }
+@enduml
