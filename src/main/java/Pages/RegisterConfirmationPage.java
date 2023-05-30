@@ -10,7 +10,7 @@ public class RegisterConfirmationPage {
     public RegisterConfirmationPage(WebDriver driver){
         this.driver = driver;
     }
-    public static void confirmRegistration(WebDriver driver){
+    public void confirmRegistration(WebDriver driver){
         Assert.assertEquals(driver.getPageSource().contains("Thank you for registering"), true);
     }
 

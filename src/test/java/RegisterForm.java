@@ -1,6 +1,6 @@
 import org.testng.Assert;
 import pages.*;
-import utils.DataLoader;
+import utils.*;
 import utils.DataLoader.TestData;
 
 import java.util.UUID;

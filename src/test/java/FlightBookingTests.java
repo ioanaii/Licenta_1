@@ -1,6 +1,5 @@
 import pages.*;
-
-import utils.DataLoader;
+import utils.*;
 
 import org.testng.annotations.*;
 import io.github.bonigarcia.wdm.WebDriverManager;
