@@ -1,5 +1,6 @@
-import pages.*;
 import utils.*;
+import pages.*;
+
 
 import org.testng.annotations.*;
 import io.github.bonigarcia.wdm.WebDriverManager;
@@ -9,34 +10,12 @@ import org.testng.asserts.SoftAssert;
 import org.testng.Assert;
 
 
-public class FlightBookingTests {
-    private static WebDriver driver = null;
-    private static HomePage homePage;
-    private static LogInPage logIn;
-    private static FlightFinderPage flightFind;
-    private static FlightPurchasePage flightPurchase;
-    private static FlightSelectionPage flightSelect;
-    private static ItineraryPage itinerary;
+public class FlightBookingTests extends BaseTest{
 
     @DataProvider
     public Object[][] propertiesTestData() {
         return DataLoader.loadFromPropertiesFile("src/main/resources/test2.properties", "username", "password", "username2","password2");
 
-    }
-
-    @BeforeClass
-    public void setUp() {
-
-        WebDriverManager.chromedriver().setup();
-        driver = new ChromeDriver();
-        driver.get("http://localhost:8080/mtours/servlet/com.mercurytours.servlet.WelcomeServlet");
-
-        homePage = new HomePage(driver);
-        logIn = new LogInPage(driver);
-        flightFind = new FlightFinderPage(driver);
-        flightPurchase = new FlightPurchasePage(driver);
-        flightSelect = new FlightSelectionPage(driver);
-        itinerary = new ItineraryPage(driver);
     }
 
     @Test (dataProvider = "propertiesTestData")
@@ -45,6 +24,13 @@ public class FlightBookingTests {
         String pass1 = (String) data[1];
         String user2 = (String) data[2];
         String pass2 = (String) data[3];
+
+        HomePage homePage = new HomePage(driver);
+        LogInPage logIn = new LogInPage(driver);
+        FlightFinderPage flightFind = new FlightFinderPage(driver);
+        FlightPurchasePage flightPurchase = new FlightPurchasePage(driver);
+        FlightSelectionPage flightSelect = new FlightSelectionPage(driver);
+        ItineraryPage itinerary = new ItineraryPage(driver);
 
         homePage.accessPage("signOn");
         logIn.inputLogIn(user1, pass1);
@@ -65,6 +51,13 @@ public class FlightBookingTests {
         String user2 = (String) data[2];
         String pass2 = (String) data[3];
 
+        HomePage homePage = new HomePage(driver);
+        LogInPage logIn = new LogInPage(driver);
+        FlightFinderPage flightFind = new FlightFinderPage(driver);
+        FlightPurchasePage flightPurchase = new FlightPurchasePage(driver);
+        FlightSelectionPage flightSelect = new FlightSelectionPage(driver);
+        ItineraryPage itinerary = new ItineraryPage(driver);
+
         homePage.accessPage("signOn");
         logIn.inputLogIn(user2, pass2);
 
@@ -84,6 +77,13 @@ public class FlightBookingTests {
         String user2 = (String) data[2];
         String pass2 = (String) data[3];
 
+        HomePage homePage = new HomePage(driver);
+        LogInPage logIn = new LogInPage(driver);
+        FlightFinderPage flightFind = new FlightFinderPage(driver);
+        FlightPurchasePage flightPurchase = new FlightPurchasePage(driver);
+        FlightSelectionPage flightSelect = new FlightSelectionPage(driver);
+        ItineraryPage itinerary = new ItineraryPage(driver);
+
         String expectedURL = "com.mercurytours.servlet.ReservationServlet";
         SoftAssert softAssert = new SoftAssert();
 
@@ -101,6 +101,13 @@ public class FlightBookingTests {
         String pass1 = (String) data[1];
         String user2 = (String) data[2];
         String pass2 = (String) data[3];
+
+        HomePage homePage = new HomePage(driver);
+        LogInPage logIn = new LogInPage(driver);
+        FlightFinderPage flightFind = new FlightFinderPage(driver);
+        FlightPurchasePage flightPurchase = new FlightPurchasePage(driver);
+        FlightSelectionPage flightSelect = new FlightSelectionPage(driver);
+        ItineraryPage itinerary = new ItineraryPage(driver);
 
         String expectedURL = "com.mercurytours.servlet.PurchaseServlet";
 
@@ -123,23 +130,25 @@ public class FlightBookingTests {
         softAssert.assertAll();
     }
 
-
-    @AfterClass
-    public void teardDownTest(){
-        driver.close();
-        driver.quit();
-        System.out.println("Test completed successfully");
-    }
-    private static void validateFlightFinderFilters(SoftAssert softAssert, String tripType, String passCount, String fromPort, String fromMonth, String fromDay,
+    private void validateFlightFinderFilters(SoftAssert softAssert, String tripType, String passCount, String fromPort, String fromMonth, String fromDay,
                                                     String toPort, String toMonth, String toDay, String serviceClass, String airline){
+
+        FlightFinderPage flightFind = new FlightFinderPage(driver);
+
         flightFind.enterFlightDetails(tripType, passCount,  fromPort,  fromMonth,  fromDay, toPort,  toMonth,  toDay,  serviceClass,  airline);
         softAssert.assertTrue(driver.getPageSource().contains("Departure date is greater than the return date."), "Validation error not found");
     }
-    private static void validateFlightPurchaseIncompleteFields(SoftAssert softAssert, String firstName,  String lastName,  String creditNumber){
+    private void validateFlightPurchaseIncompleteFields(SoftAssert softAssert, String firstName,  String lastName,  String creditNumber){
+
+        FlightPurchasePage flightPurchase = new FlightPurchasePage(driver);
+
         flightPurchase.inputFlightPurchase(firstName,  lastName,  creditNumber);
         softAssert.assertTrue(driver.getPageSource().contains(" Please fill all mandatory fields in red, and then resubmit the form."), "Validation error message not found: Please fill all mandatory fields");
     }
-    private static void validateFlightPurchaseInvalidCard(SoftAssert softAssert, String firstName,  String lastName,  String creditNumber){
+    private void validateFlightPurchaseInvalidCard(SoftAssert softAssert, String firstName,  String lastName,  String creditNumber){
+
+        FlightPurchasePage flightPurchase = new FlightPurchasePage(driver);
+
         flightPurchase.inputFlightPurchase(firstName,  lastName,  creditNumber);
         softAssert.assertTrue(driver.getPageSource().contains(" The credit card number is not valid"), "Validation error message not found: The credit card number is not valid");
     }

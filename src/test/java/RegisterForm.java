@@ -11,13 +11,9 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.testng.asserts.SoftAssert;
 
 
-public class RegisterForm {
-    private static String uniqueUsername;
-    private static String uniquePassword;
-    private static WebDriver driver = null;
-    private static RegisterPage registerForm;
-    private static HomePage homePage;
-    private static RegisterConfirmationPage registerConfirmationPage;
+public class RegisterForm extends BaseTest{
+    private String uniqueUsername;
+    private String uniquePassword;
 
     @DataProvider
     public Object[][] jsonTestData() {
@@ -28,40 +24,6 @@ public class RegisterForm {
     @DataProvider
     public Object[][] propertiesTestData() {
         return DataLoader.loadFromPropertiesFile("src/main/resources/test2.properties", "username", "password", "username2","password2");
-
-    }
-
-    @BeforeMethod
-    public void generateUniqueUsers() {
-        uniqueUsername = "username_" + UUID.randomUUID().toString().substring(0, 8);
-        uniquePassword = "pass_" + UUID.randomUUID().toString().substring(0, 8);
-
-
-    }
-
-    @BeforeTest
-    //TO DO: Fix Selenium Grid
-    /*public static void setUp() throws Exception {
-        ChromeOptions options = new ChromeOptions();
-        options.setCapability(CapabilityType.BROWSER_NAME, "chrome");
-
-        driver = new RemoteWebDriver(new URL("http://localhost:4444/wd/hub"), options);
-
-        driver.get("http://localhost:8080/mtours/servlet/com.mercurytours.servlet.WelcomeServlet");
-        driver.manage().timeouts().implicitlyWait(500, TimeUnit.MILLISECONDS);
-
-
-    }*/
-    //To be used until figuring out Selenium grid
-    public void setUp(){
-        WebDriverManager.chromedriver().setup();
-        driver = new ChromeDriver();
-        driver.get("http://localhost:8080/mtours/servlet/com.mercurytours.servlet.WelcomeServlet");
-
-        registerForm = new RegisterPage(driver);
-        homePage = new HomePage(driver);
-        registerConfirmationPage = new RegisterConfirmationPage(driver);
-
 
     }
 
@@ -77,18 +39,31 @@ public class RegisterForm {
         String state = testData.getState();
         String postalCode = testData.getPostalCode();
 
+        RegisterPage registerForm = new RegisterPage(driver);
+        HomePage homePage = new HomePage(driver);
+
+        uniqueUsername = "username_" + UUID.randomUUID().toString().substring(0, 8);
+        uniquePassword = "pass_" + UUID.randomUUID().toString().substring(0, 8);
+
         homePage.accessPage("register");
 
         registerForm.allFieldsRegistrationForm(firstName, lastName, phoneNumber,email,
             address, address, city, state, postalCode,
             "ANTARCTICA",uniqueUsername,uniquePassword, uniquePassword);
 
-
     }
     @Test
     public void registerUser_submitRequiredFields_Test(){
 
+        RegisterPage registerForm = new RegisterPage(driver);
+        HomePage homePage = new HomePage(driver);
+        RegisterConfirmationPage registerConfirmationPage = new RegisterConfirmationPage(driver);
+
         homePage.accessPage("register");
+
+        uniqueUsername = "username_" + UUID.randomUUID().toString().substring(0, 8);
+        uniquePassword = "pass_" + UUID.randomUUID().toString().substring(0, 8);
+
         registerForm.inputRegisterForm(uniqueUsername, uniquePassword, uniquePassword);
 
         }
@@ -100,8 +75,11 @@ public class RegisterForm {
         String user2 = (String) data[2];
         String password2 = (String) data[3];
 
+        HomePage homePage = new HomePage(driver);
+
         homePage.accessPage("register");
         String expectedURL = "com.mercurytours.servlet.RegisterServlet";
+
         SoftAssert softAssert = new SoftAssert();
 
         //incomplete fields
@@ -125,25 +103,24 @@ public class RegisterForm {
         softAssert.assertAll();
     }
 
-    @AfterTest
-    public void tearDownTest(){
-        driver.close();
-        driver.quit();
-        System.out.println("Test completed successfully");
-    }
-    private static void validateIncompleteFields(SoftAssert softAssert, String username, String password, String confirmPassword) {
+    private void validateIncompleteFields(SoftAssert softAssert, String username, String password, String confirmPassword) {
+        RegisterPage registerForm = new RegisterPage(driver);
         registerForm.inputRegisterForm(username, password, confirmPassword);
         softAssert.assertTrue(driver.getPageSource().contains("Please fill all fields bellow to complete the registration."),
                 "Validation error not found or is incorrect: Incomplete fields");
     }
 
-    private static void validateExistingUser(SoftAssert softAssert, String username, String password, String confirmPassword) {
+    private void validateExistingUser(SoftAssert softAssert, String username, String password, String confirmPassword) {
+        RegisterPage registerForm = new RegisterPage(driver);
+
         registerForm.inputRegisterForm(username, password, confirmPassword);
         softAssert.assertTrue(driver.getPageSource().contains("Note: Error - The user name has been already used, please enter a new name"),
                 "Validation error not found or is incorrect: User name already used");
     }
 
-    private static void validateInvalidPassword(SoftAssert softAssert, String username, String password, String confirmPassword) {
+    private void validateInvalidPassword(SoftAssert softAssert, String username, String password, String confirmPassword) {
+        RegisterPage registerForm = new RegisterPage(driver);
+
         registerForm.inputRegisterForm(username, password, confirmPassword);
         softAssert.assertTrue(driver.getPageSource().contains("Note: The confirmed password must be the same as the desired password.."),
                 "Validation error not found or is incorrect: Password mismatch");
