@@ -130,7 +130,7 @@ public class FlightBookingTests extends BaseTest{
         softAssert.assertAll();
     }
 
-    private void validateFlightFinderFilters(SoftAssert softAssert, String tripType, String passCount, String fromPort, String fromMonth, String fromDay,
+    public void validateFlightFinderFilters(SoftAssert softAssert, String tripType, String passCount, String fromPort, String fromMonth, String fromDay,
                                                     String toPort, String toMonth, String toDay, String serviceClass, String airline){
 
         FlightFinderPage flightFind = new FlightFinderPage(driver);
@@ -138,14 +138,14 @@ public class FlightBookingTests extends BaseTest{
         flightFind.enterFlightDetails(tripType, passCount,  fromPort,  fromMonth,  fromDay, toPort,  toMonth,  toDay,  serviceClass,  airline);
         softAssert.assertTrue(driver.getPageSource().contains("Departure date is greater than the return date."), "Validation error not found");
     }
-    private void validateFlightPurchaseIncompleteFields(SoftAssert softAssert, String firstName,  String lastName,  String creditNumber){
+    public void validateFlightPurchaseIncompleteFields(SoftAssert softAssert, String firstName,  String lastName,  String creditNumber){
 
         FlightPurchasePage flightPurchase = new FlightPurchasePage(driver);
 
         flightPurchase.inputFlightPurchase(firstName,  lastName,  creditNumber);
         softAssert.assertTrue(driver.getPageSource().contains(" Please fill all mandatory fields in red, and then resubmit the form."), "Validation error message not found: Please fill all mandatory fields");
     }
-    private void validateFlightPurchaseInvalidCard(SoftAssert softAssert, String firstName,  String lastName,  String creditNumber){
+    public void validateFlightPurchaseInvalidCard(SoftAssert softAssert, String firstName,  String lastName,  String creditNumber){
 
         FlightPurchasePage flightPurchase = new FlightPurchasePage(driver);
 
