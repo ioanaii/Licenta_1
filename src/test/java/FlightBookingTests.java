@@ -3,14 +3,13 @@ import pages.*;
 
 
 import org.testng.annotations.*;
-import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.testng.asserts.SoftAssert;
 import org.testng.Assert;
 
 
 public class FlightBookingTests extends BaseTest{
+    private WebDriver driver = getDriver();
 
     @DataProvider
     public Object[][] propertiesTestData() {
@@ -24,6 +23,8 @@ public class FlightBookingTests extends BaseTest{
         String pass1 = (String) data[1];
         String user2 = (String) data[2];
         String pass2 = (String) data[3];
+
+        WebDriver driver = getDriver();
 
         HomePage homePage = new HomePage(driver);
         LogInPage logIn = new LogInPage(driver);
@@ -51,6 +52,8 @@ public class FlightBookingTests extends BaseTest{
         String user2 = (String) data[2];
         String pass2 = (String) data[3];
 
+        WebDriver driver = getDriver();
+
         HomePage homePage = new HomePage(driver);
         LogInPage logIn = new LogInPage(driver);
         FlightFinderPage flightFind = new FlightFinderPage(driver);
@@ -77,12 +80,10 @@ public class FlightBookingTests extends BaseTest{
         String user2 = (String) data[2];
         String pass2 = (String) data[3];
 
+        WebDriver driver = getDriver();
+
         HomePage homePage = new HomePage(driver);
         LogInPage logIn = new LogInPage(driver);
-        FlightFinderPage flightFind = new FlightFinderPage(driver);
-        FlightPurchasePage flightPurchase = new FlightPurchasePage(driver);
-        FlightSelectionPage flightSelect = new FlightSelectionPage(driver);
-        ItineraryPage itinerary = new ItineraryPage(driver);
 
         String expectedURL = "com.mercurytours.servlet.ReservationServlet";
         SoftAssert softAssert = new SoftAssert();
@@ -96,18 +97,18 @@ public class FlightBookingTests extends BaseTest{
     }
 
     @Test (dataProvider = "propertiesTestData")
-    private void flightBooking_checkFlightPurchaseValidationErrors_Test(Object[] data){
+    public void flightBooking_checkFlightPurchaseValidationErrors_Test(Object[] data){
         String user1 = (String) data[0];
         String pass1 = (String) data[1];
         String user2 = (String) data[2];
         String pass2 = (String) data[3];
 
+        WebDriver driver = getDriver();
+
         HomePage homePage = new HomePage(driver);
         LogInPage logIn = new LogInPage(driver);
         FlightFinderPage flightFind = new FlightFinderPage(driver);
-        FlightPurchasePage flightPurchase = new FlightPurchasePage(driver);
         FlightSelectionPage flightSelect = new FlightSelectionPage(driver);
-        ItineraryPage itinerary = new ItineraryPage(driver);
 
         String expectedURL = "com.mercurytours.servlet.PurchaseServlet";
 
@@ -133,6 +134,8 @@ public class FlightBookingTests extends BaseTest{
     private void validateFlightFinderFilters(SoftAssert softAssert, String tripType, String passCount, String fromPort, String fromMonth, String fromDay,
                                                     String toPort, String toMonth, String toDay, String serviceClass, String airline){
 
+        WebDriver driver = getDriver();
+
         FlightFinderPage flightFind = new FlightFinderPage(driver);
 
         flightFind.enterFlightDetails(tripType, passCount,  fromPort,  fromMonth,  fromDay, toPort,  toMonth,  toDay,  serviceClass,  airline);
@@ -140,12 +143,15 @@ public class FlightBookingTests extends BaseTest{
     }
     private void validateFlightPurchaseIncompleteFields(SoftAssert softAssert, String firstName,  String lastName,  String creditNumber){
 
+        WebDriver driver = getDriver();
+
         FlightPurchasePage flightPurchase = new FlightPurchasePage(driver);
 
         flightPurchase.inputFlightPurchase(firstName,  lastName,  creditNumber);
         softAssert.assertTrue(driver.getPageSource().contains(" Please fill all mandatory fields in red, and then resubmit the form."), "Validation error message not found: Please fill all mandatory fields");
     }
-    public void validateFlightPurchaseInvalidCard(SoftAssert softAssert, String firstName,  String lastName,  String creditNumber){
+    private void validateFlightPurchaseInvalidCard(SoftAssert softAssert, String firstName,  String lastName,  String creditNumber){
+        WebDriver driver = getDriver();
 
         FlightPurchasePage flightPurchase = new FlightPurchasePage(driver);
 
