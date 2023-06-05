@@ -1,9 +1,9 @@
 pipeline {
   agent any
   stages {
-    stage('') {
+    stage('error') {
       steps {
-        git(url: 'https://github.com/ioanaii/Licenta_1/', branch: '*/jenkins')
+        git(url: 'https://github.com/ioanaii/Licenta_1/', branch: 'master')
       }
     }
 
