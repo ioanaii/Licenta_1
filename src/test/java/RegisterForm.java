@@ -4,10 +4,8 @@ import utils.*;
 import utils.DataLoader.TestData;
 
 import java.util.UUID;
-import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.WebDriver;
 import org.testng.annotations.*;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.testng.asserts.SoftAssert;
 
 
@@ -39,6 +37,7 @@ public class RegisterForm extends BaseTest{
         String state = testData.getState();
         String postalCode = testData.getPostalCode();
 
+        WebDriver driver = getDriver();
         RegisterPage registerForm = new RegisterPage(driver);
         HomePage homePage = new HomePage(driver);
 
@@ -54,6 +53,8 @@ public class RegisterForm extends BaseTest{
     }
     @Test
     public void registerUser_submitRequiredFields_Test(){
+
+        WebDriver driver = getDriver();
 
         RegisterPage registerForm = new RegisterPage(driver);
         HomePage homePage = new HomePage(driver);
@@ -74,6 +75,8 @@ public class RegisterForm extends BaseTest{
         String password = (String) data[1];
         String user2 = (String) data[2];
         String password2 = (String) data[3];
+
+        WebDriver driver = getDriver();
 
         HomePage homePage = new HomePage(driver);
 
@@ -104,6 +107,8 @@ public class RegisterForm extends BaseTest{
     }
 
     private void validateIncompleteFields(SoftAssert softAssert, String username, String password, String confirmPassword) {
+        WebDriver driver = getDriver();
+
         RegisterPage registerForm = new RegisterPage(driver);
         registerForm.inputRegisterForm(username, password, confirmPassword);
         softAssert.assertTrue(driver.getPageSource().contains("Please fill all fields bellow to complete the registration."),
@@ -111,6 +116,8 @@ public class RegisterForm extends BaseTest{
     }
 
     private void validateExistingUser(SoftAssert softAssert, String username, String password, String confirmPassword) {
+        WebDriver driver = getDriver();
+
         RegisterPage registerForm = new RegisterPage(driver);
 
         registerForm.inputRegisterForm(username, password, confirmPassword);
@@ -119,6 +126,8 @@ public class RegisterForm extends BaseTest{
     }
 
     private void validateInvalidPassword(SoftAssert softAssert, String username, String password, String confirmPassword) {
+        WebDriver driver = getDriver();
+
         RegisterPage registerForm = new RegisterPage(driver);
 
         registerForm.inputRegisterForm(username, password, confirmPassword);
