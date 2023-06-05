@@ -9,47 +9,49 @@ import org.openqa.selenium.firefox.FirefoxOptions;
 import org.testng.annotations.*;
 
 public class BaseTest {
-    protected WebDriver driver;
+    private static ThreadLocal<WebDriver> driverThreadLocal = new ThreadLocal<>();
 
-//cross-browser testing setup: WebDriverManager, chromeOptions
+    protected WebDriver getDriver() {
+        return driverThreadLocal.get();
+    }
+
+    //cross-browser testing setup: WebDriverManager, chromeOptions
     @BeforeMethod
     @Parameters("browser")
-    public void setUp(String browser) throws InterruptedException {
+    public void setUp(String browser) {
+        WebDriver driver = createDriver(browser);
+        driverThreadLocal.set(driver);
+    }
+
+    @AfterMethod
+    public void tearDown() {
+        WebDriver driver = getDriver();
+        if (driver != null) {
+            driver.quit();
+            driverThreadLocal.remove();
+        }
+        System.out.println("Test completed successfully");
+    }
+
+    private WebDriver createDriver(String browser) {
         switch (browser.toLowerCase()) {
             case "chrome":
                 WebDriverManager.chromedriver().setup();
                 ChromeOptions optionsChrome = new ChromeOptions();
                 optionsChrome.addArguments("--headless");
-                driver = new ChromeDriver(optionsChrome);
-                break;
+                return new ChromeDriver(optionsChrome);
             case "edge":
                 WebDriverManager.edgedriver().setup();
                 EdgeOptions optionsEdge = new EdgeOptions();
                 optionsEdge.addArguments("--headless");
-                driver = new EdgeDriver(optionsEdge);
-                break;
+                return new EdgeDriver(optionsEdge);
             case "firefox":
                 WebDriverManager.firefoxdriver().driverVersion("0.33.0").setup();
                 FirefoxOptions optionsFirefox = new FirefoxOptions();
                 optionsFirefox.addArguments("--headless");
-                driver = new FirefoxDriver(optionsFirefox);
-                break;
+                return new FirefoxDriver(optionsFirefox);
             default:
                 throw new IllegalArgumentException("Invalid browser: " + browser);
         }
-
-        driver.get("http://localhost:8080/mtours/servlet/com.mercurytours.servlet.WelcomeServlet");
-        Thread.sleep(500);
     }
-
-
-    @AfterMethod
-    public void tearDown() throws InterruptedException{
-        Thread.sleep(500);
-        if (driver != null) {
-        driver.quit();
-    }
-    }
-
-
 }
