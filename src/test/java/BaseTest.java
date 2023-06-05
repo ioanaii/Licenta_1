@@ -11,10 +11,10 @@ import org.testng.annotations.*;
 public class BaseTest {
     protected WebDriver driver;
 
-    //cross-browser testing setup: WebDriverManager, chromeOptions
+//cross-browser testing setup: WebDriverManager, chromeOptions
     @BeforeMethod
     @Parameters("browser")
-    public void setUp(String browser) {
+    public void setUp(String browser) throws InterruptedException {
         switch (browser.toLowerCase()) {
             case "chrome":
                 WebDriverManager.chromedriver().setup();
@@ -39,34 +39,14 @@ public class BaseTest {
         }
 
         driver.get("http://localhost:8080/mtours/servlet/com.mercurytours.servlet.WelcomeServlet");
-
-    }
-    @BeforeMethod
-    protected WebDriver getDriver() {
-        return driver;
+        Thread.sleep(500);
     }
 
-
-
-    //Selenium Grid test setup #TODO
-    //TO DO: Fix Selenium Grid
-    /*public static void setUp() throws Exception {
-        ChromeOptions options = new ChromeOptions();
-        options.setCapability(CapabilityType.BROWSER_NAME, "chrome");
-
-        driver = new RemoteWebDriver(new URL("http://localhost:4444/wd/hub"), options);
-
-        driver.get("http://localhost:8080/mtours/servlet/com.mercurytours.servlet.WelcomeServlet");
-        driver.manage().timeouts().implicitlyWait(500, TimeUnit.MILLISECONDS);
-
-
-    }*/
 
     @AfterMethod
-    public void tearDown() {
-        // Your teardown code here
+    public void tearDown() throws InterruptedException{
+        Thread.sleep(500);
         driver.quit();
-        System.out.println("Test completed successfully");
     }
 
 
