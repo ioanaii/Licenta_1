@@ -19,3 +19,4 @@ pipeline {
         always {            
             junit 'testng-results.xml'
         }
+    }
