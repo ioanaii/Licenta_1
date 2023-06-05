@@ -1,19 +1,14 @@
 import pages.*;
 import utils.*;
 
-import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.WebDriver;
 import org.testng.annotations.*;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.testng.asserts.SoftAssert;
 import org.testng.Assert;
-import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.edge.EdgeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.edge.EdgeOptions;
-import org.openqa.selenium.firefox.FirefoxOptions;
 
 public class LogInTests extends BaseTest{
+    private WebDriver driver = getDriver();
+
     @DataProvider
     public Object[][] propertiesTestData() {
         return DataLoader.loadFromPropertiesFile("src/main/resources/test2.properties", "username", "password", "username2","password2");
@@ -28,6 +23,7 @@ public class LogInTests extends BaseTest{
         String user2 = (String) data[2];
         String pass2 = (String) data[3];
 
+        WebDriver driver = getDriver();
         HomePage homePage = new HomePage(driver);
         LogInPage logIn = new LogInPage(driver);
 
@@ -48,10 +44,9 @@ public class LogInTests extends BaseTest{
 
         SoftAssert softAssert = new SoftAssert();
 
-
+        WebDriver driver = getDriver();
 
         HomePage homePage = new HomePage(driver);
-        LogInPage logIn = new LogInPage(driver);
 
         homePage.accessPage("signOn");
 
@@ -74,12 +69,18 @@ public class LogInTests extends BaseTest{
     }
 
     private void validateIncompleteFields(SoftAssert softAssert, String username, String password) {
+
+        WebDriver driver = getDriver();
+
         LogInPage logIn = new LogInPage(driver);
         logIn.inputLogIn(username, password);
         softAssert.assertTrue(driver.getPageSource().contains("Invalid User Name or Password."),
                 "Validation error not found or is incorrect: Invalid User Name or Password.");
     }
     private void validateInvalidCredentials(SoftAssert softAssert, String username, String password) {
+
+        WebDriver driver = getDriver();
+
         LogInPage logIn = new LogInPage(driver);
         logIn.inputLogIn(username, password);
         softAssert.assertTrue(driver.getPageSource().contains("Please fill all fields"),
@@ -87,3 +88,4 @@ public class LogInTests extends BaseTest{
     }
 
 }
+
