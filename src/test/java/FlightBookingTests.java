@@ -96,7 +96,7 @@ public class FlightBookingTests extends BaseTest{
     }
 
     @Test (dataProvider = "propertiesTestData")
-    public void flightBooking_checkFlightPurchaseValidationErrors_Test(Object[] data){
+    private void flightBooking_checkFlightPurchaseValidationErrors_Test(Object[] data){
         String user1 = (String) data[0];
         String pass1 = (String) data[1];
         String user2 = (String) data[2];
@@ -130,7 +130,7 @@ public class FlightBookingTests extends BaseTest{
         softAssert.assertAll();
     }
 
-    public void validateFlightFinderFilters(SoftAssert softAssert, String tripType, String passCount, String fromPort, String fromMonth, String fromDay,
+    private void validateFlightFinderFilters(SoftAssert softAssert, String tripType, String passCount, String fromPort, String fromMonth, String fromDay,
                                                     String toPort, String toMonth, String toDay, String serviceClass, String airline){
 
         FlightFinderPage flightFind = new FlightFinderPage(driver);
@@ -138,7 +138,7 @@ public class FlightBookingTests extends BaseTest{
         flightFind.enterFlightDetails(tripType, passCount,  fromPort,  fromMonth,  fromDay, toPort,  toMonth,  toDay,  serviceClass,  airline);
         softAssert.assertTrue(driver.getPageSource().contains("Departure date is greater than the return date."), "Validation error not found");
     }
-    public void validateFlightPurchaseIncompleteFields(SoftAssert softAssert, String firstName,  String lastName,  String creditNumber){
+    private void validateFlightPurchaseIncompleteFields(SoftAssert softAssert, String firstName,  String lastName,  String creditNumber){
 
         FlightPurchasePage flightPurchase = new FlightPurchasePage(driver);
 
