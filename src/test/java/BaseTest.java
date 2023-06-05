@@ -1,4 +1,5 @@
 import io.github.bonigarcia.wdm.WebDriverManager;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -9,10 +10,10 @@ import org.openqa.selenium.firefox.FirefoxOptions;
 import org.testng.annotations.*;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import java.time.Duration;
 
 public class BaseTest {
     private static ThreadLocal<WebDriver> driverThreadLocal = new ThreadLocal<>();
-
     protected WebDriver getDriver() {
         return driverThreadLocal.get();
     }
@@ -55,7 +56,6 @@ public class BaseTest {
         }
         System.out.println("Test completed successfully");
     }
-
 
     private WebDriver createDriver(String browser) {
         switch (browser.toLowerCase()) {
