@@ -46,7 +46,9 @@ public class BaseTest {
     @AfterMethod
     public void tearDown() throws InterruptedException{
         Thread.sleep(500);
+        if (driver != null) {
         driver.quit();
+    }
     }
 
 
