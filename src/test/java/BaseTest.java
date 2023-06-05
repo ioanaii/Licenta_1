@@ -25,7 +25,7 @@ public class BaseTest {
         try {
             driver = createDriver(browser);
             driverThreadLocal.set(driver);
-            WebDriverWait wait = new WebDriverWait(driver, 30);
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
             driver.get("http://localhost:8080/mtours/servlet/com.mercurytours.servlet.WelcomeServlet");
             wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//a[@href='com.mercurytours.servlet.SignonServlet']")));
         } catch (Exception e) {
@@ -42,7 +42,7 @@ public class BaseTest {
         WebDriver driver = getDriver();
         if (driver != null) {
             try {
-                WebDriverWait wait = new WebDriverWait(driver, 30);
+                WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
                 wait.until(ExpectedConditions.numberOfWindowsToBe(0));
                 driver.quit();
             } catch (Exception e) {
