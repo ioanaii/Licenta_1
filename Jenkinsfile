@@ -10,7 +10,7 @@ pipeline {
 
         stage('Build and Test') {
             steps {
-                sh 'mvn clean install test -Dtestngfile="TestNG3.xml" -Dmaven.test.failure.ignore=true'
+                bat 'mvn clean install test -Dtestngfile="TestNG3.xml" -Dmaven.test.failure.ignore=true'
             }
         }
     }
