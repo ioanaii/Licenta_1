@@ -7,6 +7,8 @@ import org.openqa.selenium.edge.EdgeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.testng.annotations.*;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 
 public class BaseTest {
     private static ThreadLocal<WebDriver> driverThreadLocal = new ThreadLocal<>();
@@ -19,19 +21,41 @@ public class BaseTest {
     @BeforeMethod
     @Parameters("browser")
     public void setUp(String browser) {
-        WebDriver driver = createDriver(browser);
-        driverThreadLocal.set(driver);
+        WebDriver driver = null;
+        try {
+            driver = createDriver(browser);
+            driverThreadLocal.set(driver);
+            WebDriverWait wait = new WebDriverWait(driver, 30);
+            driver.get("http://localhost:8080/mtours/servlet/com.mercurytours.servlet.WelcomeServlet");
+            wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//a[@href='com.mercurytours.servlet.SignonServlet']")));
+        } catch (Exception e) {
+            System.out.println("Error during setup: " + e.getMessage());
+            e.printStackTrace();
+            if (driver != null) {
+                driver.quit();
+            }
+        }
     }
 
     @AfterMethod
     public void tearDown() {
         WebDriver driver = getDriver();
         if (driver != null) {
-            driver.quit();
-            driverThreadLocal.remove();
+            try {
+                WebDriverWait wait = new WebDriverWait(driver, 30);
+                wait.until(ExpectedConditions.numberOfWindowsToBe(0));
+                driver.quit();
+            } catch (Exception e) {
+                // Handle any exceptions that occur during teardown
+                System.out.println("Error during teardown: " + e.getMessage());
+                e.printStackTrace();
+            } finally {
+                driverThreadLocal.remove();
+            }
         }
         System.out.println("Test completed successfully");
     }
+
 
     private WebDriver createDriver(String browser) {
         switch (browser.toLowerCase()) {
