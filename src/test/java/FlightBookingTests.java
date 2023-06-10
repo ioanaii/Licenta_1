@@ -7,6 +7,9 @@ import org.openqa.selenium.WebDriver;
 import org.testng.asserts.SoftAssert;
 import org.testng.Assert;
 
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
+
 
 public class FlightBookingTests extends BaseTest{
     private WebDriver driver = getDriver();
@@ -21,12 +24,18 @@ public class FlightBookingTests extends BaseTest{
     public void flightBooking_roundTrip_Test(Object[] data) {
         String user1 = (String) data[0];
         String pass1 = (String) data[1];
-        String user2 = (String) data[2];
-        String pass2 = (String) data[3];
 
         WebDriver driver = getDriver();
-
         HomePage homePage = new HomePage(driver);
+
+        //Set up - adauga user cu care sa ne autentificam
+        RegisterPage registerForm = new RegisterPage(driver);
+        homePage.accessPage("register");
+        //username sa fie unic
+        user1+= UUID.randomUUID().toString();
+        registerForm.inputRegisterForm(user1, pass1, pass1);
+
+        //login
         LogInPage logIn = new LogInPage(driver);
         FlightFinderPage flightFind = new FlightFinderPage(driver);
         FlightPurchasePage flightPurchase = new FlightPurchasePage(driver);
@@ -36,25 +45,35 @@ public class FlightBookingTests extends BaseTest{
         homePage.accessPage("signOn");
         logIn.inputLogIn(user1, pass1);
 
+        //driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+
+        //Test itinerariy
         flightFind.enterFlightDetails("roundtrip", "2", "Frankfurt", "Feb", "21", "Acapulco", "Feb", "21", "Coach", "No Preference");
         flightSelect.selectFlights(1, 2);
         flightPurchase.inputFlightPurchase("John", "Doe", "1123");
 
         homePage.accessPage("itinerary");
+        Assert.assertTrue(driver.getPageSource().contains("Frankfurt to Acapulco"));
         itinerary.removeSelected();
-
+        Assert.assertFalse(driver.getPageSource().contains("Frankfurt to Acapulco"));
     }
 
     @Test (dataProvider = "propertiesTestData")
     public void flightBooking_oneWay_Test(Object[] data) {
-        String user1 = (String) data[0];
-        String pass1 = (String) data[1];
         String user2 = (String) data[2];
         String pass2 = (String) data[3];
 
         WebDriver driver = getDriver();
 
         HomePage homePage = new HomePage(driver);
+
+        //Set up - adauga user cu care sa ne autentificam
+        RegisterPage registerForm = new RegisterPage(driver);
+        homePage.accessPage("register");
+        //username sa fie unic
+        user2+= UUID.randomUUID().toString();
+        registerForm.inputRegisterForm(user2, pass2, pass2);
+
         LogInPage logIn = new LogInPage(driver);
         FlightFinderPage flightFind = new FlightFinderPage(driver);
         FlightPurchasePage flightPurchase = new FlightPurchasePage(driver);
@@ -69,8 +88,10 @@ public class FlightBookingTests extends BaseTest{
         flightPurchase.inputFlightPurchase("John", "Doe", "1123");
 
         homePage.accessPage("itinerary");
-        itinerary.removeAll();
 
+        Assert.assertTrue(driver.getPageSource().contains("Frankfurt to Acapulco"));
+        itinerary.removeAll();
+        Assert.assertFalse(driver.getPageSource().contains("Frankfurt to Acapulco"));
     }
 
     @Test (dataProvider = "propertiesTestData")
