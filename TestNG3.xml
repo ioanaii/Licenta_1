@@ -7,7 +7,7 @@
             <class name="FlightBookingTests"/>
         </classes>
     </test>
-  <!--  <test name = "Book Flights - Edge">
+    <test name = "Book Flights - Edge">
         <parameter name="browser" value="edge" />
         <classes>
             <class name="FlightBookingTests"/>
@@ -19,5 +19,4 @@
             <class name="FlightBookingTests"/>
         </classes>
     </test>
-    -->
 </suite>
