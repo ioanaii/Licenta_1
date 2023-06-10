@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 <suite name = "Test Suite - Flight Booking Tests" parallel="methods" thread-count="2">
-    <parameter name="browser" value="chrome" />
     <test name = "Book Flights - Chrome">
+        <parameter name="browser" value="chrome" />
         <classes>
             <class name="FlightBookingTests"/>
         </classes>
     </test>
-    <parameter name="browser" value="edge" />
     <test name = "Book Flights - Edge">
+        <parameter name="browser" value="edge" />
         <classes>
             <class name="FlightBookingTests"/>
         </classes>
     </test>
-    <parameter name="browser" value="firefox" />
     <test name = "Book Flights - Firefox">
+        <parameter name="browser" value="firefox" />
         <classes>
             <class name="FlightBookingTests"/>
         </classes>

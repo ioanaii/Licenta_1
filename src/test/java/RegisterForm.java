@@ -1,3 +1,4 @@
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 import pages.*;
 import utils.*;
@@ -7,6 +8,7 @@ import java.util.UUID;
 import org.openqa.selenium.WebDriver;
 import org.testng.annotations.*;
 import org.testng.asserts.SoftAssert;
+import java.util.concurrent.TimeUnit;
 
 
 public class RegisterForm extends BaseTest{
@@ -50,6 +52,11 @@ public class RegisterForm extends BaseTest{
             address, address, city, state, postalCode,
             "ANTARCTICA",uniqueUsername,uniquePassword, uniquePassword);
 
+        //driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+        String currentUrl = driver.getCurrentUrl();
+
+        Assert.assertTrue(currentUrl.contains("com.mercurytours.servlet.RegisterServlet?procSub=1"));
+        Assert.assertTrue(driver.getPageSource().contains("Thank you for registering"));
     }
     @Test
     public void registerUser_submitRequiredFields_Test(){
@@ -67,6 +74,8 @@ public class RegisterForm extends BaseTest{
 
         registerForm.inputRegisterForm(uniqueUsername, uniquePassword, uniquePassword);
 
+        //driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+        Assert.assertTrue(driver.getPageSource().contains("Thank you for registering"));
         }
 
     @Test(dataProvider = "propertiesTestData")
